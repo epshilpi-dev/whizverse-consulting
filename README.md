@@ -1,4 +1,4 @@
-# Whizverse Consulting Static Website
+# Whizverse Consulting 
 
 ## Files
 - index.html — Home
