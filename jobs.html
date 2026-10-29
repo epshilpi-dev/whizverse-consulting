@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore technology and IT job opportunities in India and worldwide. Search software, cloud, cybersecurity, data, AI and technology leadership roles.">
+  <title>Technology & IT Jobs | Whizverse Consulting</title>
+  <link rel="stylesheet" href="css/jobs.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Whizverse Consulting <span>Global Talent & Recruitment</span></a>
+    <nav><a href="index.html">Home</a><a class="active" href="jobs.html">IT Jobs</a></nav>
+  </header>
+  <main class="page-wrap">
+    <section class="hero">
+      <p class="eyebrow">GLOBAL CAREER OPPORTUNITIES</p>
+      <h1>Technology & IT Jobs</h1>
+      <p class="intro">Discover technology opportunities across India and international markets. Search roles in software, cloud, cybersecurity, data, AI, architecture and technology leadership.</p>
+      <div class="portal-links" aria-label="Search jobs directly on job portals">
+        <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/jobs/search/?keywords=Technology%20IT">LinkedIn</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.indeed.com/jobs?q=technology+IT">Indeed</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.glassdoor.com/Job/technology-jobs-SRCH_KO0,10.htm">Glassdoor</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://wellfound.com/jobs">Wellfound</a>
+      </div>
+    </section>
+
+    <section class="search-panel" aria-label="Filter jobs">
+      <form id="filters-form">
+        <label class="search-field">Keywords
+          <input id="keyword" name="keyword" type="search" placeholder="e.g. Cloud Architect, AI, CTO">
+        </label>
+        <label>Country
+          <select id="country" name="country">
+            <option value="all">All countries</option>
+            <option value="in">India</option><option value="gb">United Kingdom</option>
+            <option value="ie">Ireland</option><option value="de">Germany</option>
+            <option value="nl">Netherlands</option><option value="ch">Switzerland</option>
+            <option value="us">United States</option><option value="ca">Canada</option>
+            <option value="sg">Singapore</option><option value="au">Australia</option>
+            <option value="nz">New Zealand</option>
+          </select>
+        </label>
+        <label>Work mode
+          <select id="work-mode" name="work-mode"><option value="any">Any</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">On-site / office</option></select>
+        </label>
+        <label>Seniority / role
+          <select id="seniority" name="seniority"><option value="any">All levels</option><option value="leadership">Leadership / Director / VP</option><option value="architect">Architect / Principal</option><option value="senior">Senior / Lead</option><option value="engineering">Engineering / Specialist</option></select>
+        </label>
+        <label>Posted
+          <select id="posted" name="posted"><option value="any">Any time</option><option value="1">Last 24 hours</option><option value="3">Last 3 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+        </label>
+        <button type="submit" class="primary-btn">Search jobs</button>
+      </form>
+      <p class="privacy-note">Applications are completed on the original employer or job-portal website. This site does not collect your CV or application.</p>
+    </section>
+
+    <section class="results-section">
+      <div class="results-heading"><div><h2>Latest opportunities</h2><p id="result-summary" aria-live="polite">Loading job listings…</p></div><button id="refresh-btn" class="secondary-btn" type="button">Refresh</button></div>
+      <div id="status" class="status" role="status"></div>
+      <div id="jobs-list" class="jobs-grid"></div>
+      <div id="empty-state" class="empty-state" hidden><h3>No matching jobs found</h3><p>Try a broader keyword or another country. You can also search the external portals above.</p></div>
+      <div id="pagination" class="pagination" hidden><button id="load-more" class="secondary-btn" type="button">Load more</button></div>
+    </section>
+    <section class="disclaimer"><strong>Source and freshness:</strong> Listings are retrieved from supported job-search feeds and may change or expire at the source. Always verify role details, location, visa eligibility and closing dates on the employer's application page.</section>
+  </main>
+  <footer><span>© <span id="year"></span> Whizverse Consulting</span><a href="index.html">Back to website</a></footer>
+  <script src="js/jobs.js" defer></script>
+</body>
+</html>
