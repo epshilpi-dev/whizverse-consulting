@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore technology jobs and career services with Whizverse Consulting. Register your profile and submit your resume.">
+  <title>Job Seekers & Career Services | Whizverse Consulting</title>
+  <style>
+    :root {
+      --navy: #142b4a;
+      --blue: #2463eb;
+      --teal: #0f9f91;
+      --ink: #243247;
+      --muted: #65748b;
+      --line: #e3e9f1;
+      --bg: #f5f8fc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a { color: var(--blue); }
+    .nav {
+      background: white;
+      border-bottom: 1px solid var(--line);
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand { color: var(--navy); font-size: 20px; font-weight: 800; text-decoration: none; }
+    .navlinks { display: flex; gap: 20px; flex-wrap: wrap; }
+    .navlinks a { text-decoration: none; color: var(--ink); font-weight: 600; }
+    .hero {
+      padding: 64px 6%;
+      color: white;
+      background: linear-gradient(125deg, #142b4a, #244c79);
+    }
+    .hero-inner { max-width: 1120px; margin: auto; }
+    .eyebrow { color: #78e0d4; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 800; }
+    h1 { font-size: clamp(34px, 5vw, 54px); line-height: 1.12; max-width: 760px; margin: 12px 0; }
+    .hero p { max-width: 700px; color: #e0e9f5; font-size: 18px; }
+    .button {
+      display: inline-block; padding: 12px 20px; border-radius: 8px;
+      background: var(--blue); color: white; text-decoration: none;
+      border: 0; cursor: pointer; font-size: 15px; font-weight: 700;
+    }
+    .button-light { background: white; color: var(--navy); margin-left: 8px; }
+    main { max-width: 1120px; margin: 36px auto; padding: 0 20px; }
+    .section-heading { margin-bottom: 18px; }
+    .section-heading h2 { color: var(--navy); margin-bottom: 4px; font-size: 28px; }
+    .section-heading p { color: var(--muted); margin-top: 0; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+    .card, .form-card {
+      background: white; border: 1px solid var(--line); border-radius: 14px; padding: 24px;
+      box-shadow: 0 5px 18px rgba(20, 43, 74, .04);
+    }
+    .card h3 { margin-top: 8px; color: var(--navy); }
+    .icon { font-size: 28px; }
+    .tag { color: #087c70; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    .register-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 24px; align-items: start; }
+    .benefits { background: var(--navy); color: white; border-radius: 14px; padding: 28px; }
+    .benefits h2 { margin-top: 0; }
+    .benefits li { margin: 12px 0; color: #e0e9f5; }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .full { grid-column: 1 / -1; }
+    label { font-size: 14px; font-weight: 700; }
+    input, select, textarea {
+      width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1;
+      border-radius: 7px; font: inherit; background: white;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #b6ccff; border-color: var(--blue); }
+    .consent { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; font-weight: 400; }
+    .consent input { width: auto; margin-top: 6px; }
+    .hint, .notice { font-size: 13px; color: var(--muted); }
+    #formStatus { margin-top: 16px; font-weight: 700; }
+    .services { margin-top: 48px; }
+    footer { margin-top: 60px; background: #10213a; color: #dce6f2; padding: 28px 6%; text-align: center; }
+    footer a { color: #a9c6ff; }
+    @media (max-width: 760px) {
+      .register-layout { grid-template-columns: 1fr; }
+      form { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .button-light { margin: 10px 0 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">WHIZVERSE</a>
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="jobs.html">IT Jobs</a>
+      <a href="#career-services">Career Services</a>
+      <a href="#register">Register</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Whizverse Career Hub</div>
+      <h1>Your next technology career starts here.</h1>
+      <p>Explore technology opportunities, register your professional profile and access practical career support to help you take the next step.</p>
+      <a class="button" href="jobs.html">Explore IT Jobs</a>
+      <a class="button button-light" href="#register">Register Your Profile</a>
+    </div>
+  </section>
+
+  <main>
+    <section aria-labelledby="opportunities">
+      <div class="section-heading">
+        <h2 id="opportunities">Build your next career move</h2>
+        <p>Start with free job search and candidate registration.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="icon" aria-hidden="true">💼</div>
+          <h3>Technology Jobs</h3>
+          <p>Explore software, cloud, cybersecurity, data, AI and technology leadership opportunities.</p>
+          <a href="jobs.html">Browse IT jobs →</a>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">📄</div>
+          <h3>Candidate Registration</h3>
+          <p>Share your experience, target role and resume to create your candidate profile.</p>
+          <a href="#register">Register free →</a>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">🌍</div>
+          <h3>Career Mobility</h3>
+          <p>Organise your profile around your preferred locations and next career opportunity.</p>
+          <a href="#register">Share preferences →</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="register" style="margin-top:48px" aria-labelledby="register-title">
+      <div class="section-heading">
+        <h2 id="register-title">Register as a candidate</h2>
+        <p>Complete the form below. Fields marked * are required.</p>
+      </div>
+
+      <div class="register-layout">
+        <aside class="benefits">
+          <h2>Your career, your next step.</h2>
+          <p>Register your details and resume for consideration for relevant opportunities and career support.</p>
+          <ul>
+            <li>Free access to the IT Jobs portal</li>
+            <li>Candidate profile and resume submission</li>
+            <li>Optional career services</li>
+            <li>Preferred role and location details</li>
+          </ul>
+          <p class="notice">Submitting a profile does not guarantee a job, interview or placement.</p>
+        </aside>
+
+        <div class="form-card">
+          <form id="candidateForm" enctype="multipart/form-data">
+            <div class="field">
+              <label for="fullName">Full name *</label>
+              <input id="fullName" name="fullName" autocomplete="name" maxlength="120" required>
+            </div>
+            <div class="field">
+              <label for="email">Email address *</label>
+              <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required>
+            </div>
+            <div class="field">
+              <label for="phone">Phone number *</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="30" required>
+            </div>
+            <div class="field">
+              <label for="preferredLocation">Preferred location</label>
+              <input id="preferredLocation" name="preferredLocation" placeholder="e.g. Pune, London, Remote" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="targetRole">Target role</label>
+              <input id="targetRole" name="targetRole" placeholder="e.g. Cloud Engineer" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="experienceYears">Experience (years)</label>
+              <input id="experienceYears" name="experienceYears" type="number" min="0" max="60" step="1">
+            </div>
+            <div class="field full">
+              <label for="skills">Key skills</label>
+              <textarea id="skills" name="skills" rows="3" maxlength="1000" placeholder="e.g. Python, AWS, DevOps, Java"></textarea>
+            </div>
+            <div class="field full">
+              <label for="resume">Resume (PDF, DOC or DOCX; max 5 MB) *</label>
+              <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+              <span class="hint">Upload only your own resume. Do not upload identity documents or sensitive personal records.</span>
+            </div>
+            <div class="field full">
+              <label class="consent" for="consentPrivacy">
+                <input id="consentPrivacy" name="consentPrivacy" type="checkbox" required>
+                <span>I consent to Whizverse Consulting processing my submitted details and resume for candidate registration and relevant career opportunities. I have read the <a href="privacy.html">Privacy Policy</a>.</span>
+              </label>
+              <span class="hint">Please publish a Privacy Policy explaining retention, access, deletion requests and contact details before accepting real candidate submissions.</span>
+            </div>
+            <div class="field full">
+              <button class="button" id="submitButton" type="submit">Submit Candidate Profile</button>
+              <div id="formStatus" role="status" aria-live="polite"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="career-services" class="services" aria-labelledby="services-title">
+      <div class="section-heading">
+        <h2 id="services-title">Career services</h2>
+        <p>Optional services to help you prepare for your next move. Pricing and booking will be introduced in a later phase.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <span class="tag">Career support</span>
+          <h3>ATS Resume Review</h3>
+          <p>Improve resume structure, clarity and alignment with target roles.</p>
+          <p><strong>Enquire about this service</strong></p>
+        </article>
+        <article class="card">
+          <span class="tag">Professional profile</span>
+          <h3>LinkedIn Optimisation</h3>
+          <p>Strengthen your professional headline, summary and experience presentation.</p>
+          <p><strong>Enquire about this service</strong></p>
+        </article>
+        <article class="card">
+          <span class="tag">Interview readiness</span>
+          <h3>Interview Preparation</h3>
+          <p>Practise communicating your experience and preparing for role-specific interviews.</p>
+          <p><strong>Enquire about this service</strong></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Whizverse Consulting. All rights reserved.</p>
+    <p><a href="index.html">Home</a> · <a href="jobs.html">IT Jobs</a> · <a href="privacy.html">Privacy Policy</a></p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const form = document.getElementById("candidateForm");
+    const status = document.getElementById("formStatus");
+    const submitButton = document.getElementById("submitButton");
+    const resumeInput = document.getElementById("resume");
+
+    resumeInput.addEventListener("change", () => {
+      const file = resumeInput.files[0];
+      if (file && file.size > 5 * 1024 * 1024) {
+        resumeInput.setCustomValidity("Resume must be 5 MB or smaller.");
+      } else {
+        resumeInput.setCustomValidity("");
+      }
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.textContent = "";
+      status.style.color = "";
+      if (!form.reportValidity()) return;
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting…";
+
+      try {
+        const response = await fetch("/api/candidates", {
+          method: "POST",
+          body: new FormData(form)
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Unable to submit your profile.");
+        }
+
+        status.style.color = "#087c70";
+        status.textContent = "Your profile has been submitted successfully.";
+        form.reset();
+      } catch (error) {
+        status.style.color = "#b42318";
+        status.textContent = error.message || "Submission failed. Please try again later.";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Candidate Profile";
+      }
+    });
+  </script>
+</body>
+</html>
