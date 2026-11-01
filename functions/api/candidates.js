@@ -1,26 +1,5 @@
 
 const MAX_RESUME_SIZE = 5 * 1024 * 1024;
-
-const ALLOWED_TYPES = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-]);
-export async function onRequestGet() {
-  return new Response(
-    JSON.stringify({
-      success: true,
-      message: "Candidates API route is active. Use POST to submit the form."
-    }),
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-store"
-      }
-    }
-  );
-}
 export async function onRequestPost({ request, env }) {
   const contentType = request.headers.get("content-type") || "";
 
