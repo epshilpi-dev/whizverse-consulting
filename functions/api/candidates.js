@@ -77,20 +77,7 @@ if (
   }, 400);
 }
 
-  // Verify the Cloudflare Turnstile token before processing the candidate.
-const token = form.get("cf-turnstile-response");
-
-if (
-  typeof token !== "string" ||
-  token.length === 0 ||
-  token.length > 2048
-) {
-  return json({
-    error: "Please complete the verification and try again."
-  }, 400);
-}
-
-if (!env.TURNSTILE_SECRET) {
+  if (!env.TURNSTILE_SECRET) {
   return json({
     error: "Verification is temporarily unavailable. Please try again later."
   }, 503);
