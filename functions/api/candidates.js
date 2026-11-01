@@ -18,7 +18,123 @@ export async function onRequestPost({ request, env }) {
   } catch {
     return json({ error: "Invalid form submission." }, 400);
   }
+  // Verify the Cloudflare Turnstile token before processing the candidate.
+const token = form.get("cf-turnstile-response");
 
+if (
+  typeof token !== "string" ||
+  token.length === 0 ||
+  token.length > 2048
+) {
+  return json({
+    error: "Please complete the verification and try again."
+  }, 400);
+}
+
+if (!env.TURNSTILE_SECRET) {
+  return json({
+    error: "Verification is temporarily unavailable. Please try again later."
+  }, 503);
+}
+
+let verification;
+
+try {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        secret: env.TURNSTILE_SECRET,
+        response: token,
+        remoteip: request.headers.get("CF-Connecting-IP") || ""
+      }),
+      signal: AbortSignal.timeout(10000)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Turnstile verification request failed.");
+  }
+
+  verification = await response.json();
+} catch {
+  return json({
+    error: "Verification is temporarily unavailable. Please try again."
+  }, 503);
+}
+
+if (
+  !verification.success ||
+  verification.hostname !== "whizverse-consulting.pages.dev" ||
+  verification.action !== "candidate_submission"
+) {
+  return json({
+    error: "Verification failed. Please try again."
+  }, 400);
+}
+
+  // Verify the Cloudflare Turnstile token before processing the candidate.
+const token = form.get("cf-turnstile-response");
+
+if (
+  typeof token !== "string" ||
+  token.length === 0 ||
+  token.length > 2048
+) {
+  return json({
+    error: "Please complete the verification and try again."
+  }, 400);
+}
+
+if (!env.TURNSTILE_SECRET) {
+  return json({
+    error: "Verification is temporarily unavailable. Please try again later."
+  }, 503);
+}
+
+let verification;
+
+try {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        secret: env.TURNSTILE_SECRET,
+        response: token,
+        remoteip: request.headers.get("CF-Connecting-IP") || ""
+      }),
+      signal: AbortSignal.timeout(10000)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Turnstile verification request failed.");
+  }
+
+  verification = await response.json();
+} catch {
+  return json({
+    error: "Verification is temporarily unavailable. Please try again."
+  }, 503);
+}
+
+if (
+  !verification.success ||
+  verification.hostname !== "whizverse-consulting.pages.dev" ||
+  verification.action !== "candidate_submission"
+) {
+  return json({
+    error: "Verification failed. Please try again."
+  }, 400);
+}
   const fullName = textField(form, "fullName", 120);
   const email = textField(form, "email", 254).toLowerCase();
   const phone = textField(form, "phone", 30);
