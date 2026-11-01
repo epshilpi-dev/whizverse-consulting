@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Whizverse | Candidate Admin</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font: 15px Arial, sans-serif;
+      background: #f3f6fb; color: #172b4d;
+    }
+    header {
+      background: #142b49; color: white;
+      padding: 22px max(20px, calc((100% - 1200px)/2));
+    }
+    header h2 { margin: 0 0 6px; }
+    main { max-width: 1200px; margin: 30px auto; padding: 0 18px; }
+    .panel {
+      background: white; border-radius: 12px; padding: 22px;
+      margin-bottom: 20px; box-shadow: 0 3px 16px #172b4d12;
+    }
+    input, select, button {
+      padding: 11px; border: 1px solid #ccd5e2;
+      border-radius: 7px; font-size: 14px;
+    }
+    button {
+      background: #2563eb; color: white; border: 0;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .filters {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      align-items: center; margin: 16px 0;
+    }
+    .filters input { flex: 1; min-width: 200px; }
+    .muted { color: #61738c; }
+    #message { margin: 14px 0; }
+    .hidden { display: none !important; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td {
+      padding: 12px 10px; text-align: left;
+      border-bottom: 1px solid #e5eaf1; vertical-align: top;
+    }
+    th { background: #f7f9fc; white-space: nowrap; }
+    td { white-space: pre-line; overflow-wrap: anywhere; }
+    .status-new { color: #175cd3; }
+    footer { text-align: center; padding: 20px; color: #61738c; }
+    @media (max-width: 650px) {
+      main { padding: 0 10px; }
+      .panel { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h2>Whizverse Consulting</h2>
+  <div>Candidate Administration</div>
+</header>
+
+<main>
+  <section id="loginPanel" class="panel">
+    <h2>Admin sign in</h2>
+    <p class="muted">Authorized administrators only.</p>
+    <form id="loginForm">
+      <div class="filters">
+        <input id="password" type="password"
+          autocomplete="current-password"
+          placeholder="Admin password" required>
+        <button id="loginBtn" type="submit">Sign in</button>
+      </div>
+    </form>
+    <p id="loginMessage" role="status"></p>
+  </section>
+
+  <section id="dashboard" class="panel hidden">
+    <h2>Candidate registrations</h2>
+    <p id="summary" class="muted">Loading candidates…</p>
+
+    <div class="filters">
+      <input id="search" maxlength="100"
+        placeholder="Search name, skills, role or location">
+      <select id="status">
+        <option value="">All statuses</option>
+        <option value="new">New</option>
+        <option value="reviewed">Reviewed</option>
+        <option value="shortlisted">Shortlisted</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <button id="searchBtn" type="button">Search</button>
+      <button id="logoutBtn" type="button">Sign out</button>
+    </div>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Candidate</th>
+            <th>Contact</th>
+            <th>Target role</th>
+            <th>Location</th>
+            <th>Experience</th>
+            <th>Status</th>
+            <th>Resume</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="filters">
+      <button id="prevBtn" type="button">Previous</button>
+      <span id="pageLabel" class="muted"></span>
+      <button id="nextBtn" type="button">Next</button>
+    </div>
+  </section>
+</main>
+
+<footer>Whizverse Consulting · Candidate administration</footer>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let page = 1;
+  let total = 0;
+  const pageSize = 25;
+
+  async function api(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: "same-origin",
+      cache: "no-store",
+      ...options
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed (${response.status})`);
+    }
+
+    return data;
+  }
+
+  function showMessage(text, error = false) {
+    $("message").textContent = text;
+    $("message").style.color = error ? "#b42318" : "#187443";
+  }
+
+  function showLoginMessage(text) {
+    $("loginMessage").textContent = text;
+    $("loginMessage").style.color = "#b42318";
+  }
+
+  function displayLogin() {
+    $("dashboard").classList.add("hidden");
+    $("loginPanel").classList.remove("hidden");
+  }
+
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    $("loginBtn").disabled = true;
+    showLoginMessage("");
+
+    try {
+      await api("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: $("password").value })
+      });
+
+      $("password").value = "";
+      $("loginPanel").classList.add("hidden");
+      $("dashboard").classList.remove("hidden");
+      page = 1;
+      await loadCandidates();
+    } catch {
+      showLoginMessage("Sign-in failed. Check your password and try again.");
+    } finally {
+      $("loginBtn").disabled = false;
+    }
+  });
+
+  async function loadCandidates() {
+    showMessage("Loading candidates…");
+    $("rows").replaceChildren();
+
+    try {
+      const params = new URLSearchParams({
+        q: $("search").value.trim(),
+        status: $("status").value,
+        page: String(page)
+      });
+
+      const data = await api("/api/admin/candidates?" + params.toString());
+      total = data.total;
+
+      $("summary").textContent = `${total} candidate(s) found`;
+      $("pageLabel").textContent =
+        `Page ${page} of ${Math.max(1, Math.ceil(total / pageSize))}`;
+      $("prevBtn").disabled = page <= 1;
+      $("nextBtn").disabled = page * pageSize >= total;
+
+      for (const candidate of data.candidates) {
+        const tr = document.createElement("tr");
+
+        const values = [
+          candidate.full_name,
+          `${candidate.email || ""}\n${candidate.phone || ""}`,
+          candidate.target_role,
+          candidate.preferred_location,
+          candidate.experience_years == null
+            ? "" : `${candidate.experience_years} years`,
+          candidate.status || "new"
+        ];
+
+        for (const value of values) {
+          const td = document.createElement("td");
+          td.textContent = value == null ? "" : String(value);
+          tr.appendChild(td);
+        }
+
+        const resumeCell = document.createElement("td");
+        const link = document.createElement("a");
+        link.href = "/api/admin/resume?id=" +
+          encodeURIComponent(candidate.id);
+        link.textContent = "Download resume";
+        resumeCell.appendChild(link);
+        tr.appendChild(resumeCell);
+
+        $("rows").appendChild(tr);
+      }
+
+      showMessage(total ? "Candidate list loaded." : "No candidates found.");
+    } catch (error) {
+      showMessage(error.message || "Could not load candidates.", true);
+
+      if (error.message === "Unauthorized.") {
+        displayLogin();
+      }
+    }
+  }
+
+  $("searchBtn").addEventListener("click", () => {
+    page = 1;
+    loadCandidates();
+  });
+
+  $("search").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      page = 1;
+      loadCandidates();
+    }
+  });
+
+  $("status").addEventListener("change", () => {
+    page = 1;
+    loadCandidates();
+  });
+
+  $("prevBtn").addEventListener("click", () => {
+    if (page > 1) {
+      page--;
+      loadCandidates();
+    }
+  });
+
+  $("nextBtn").addEventListener("click", () => {
+    if (page * pageSize < total) {
+      page++;
+      loadCandidates();
+    }
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    $("logoutBtn").disabled = true;
+
+    try {
+      await api("/api/admin/logout", { method: "POST" });
+    } catch {
+      // The session may remain valid if logout fails.
+    } finally {
+      $("logoutBtn").disabled = false;
+      $("rows").replaceChildren();
+      $("summary").textContent = "";
+      showMessage("");
+      displayLogin();
+    }
+  });
+</script>
+</body>
+</html>
