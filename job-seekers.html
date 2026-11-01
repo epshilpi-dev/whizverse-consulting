@@ -203,8 +203,14 @@
               </label>
               <span class="hint">Please publish a Privacy Policy explaining retention, access, deletion requests and contact details before accepting real candidate submissions.</span>
             </div>
+            <div
+  class="cf-turnstile"
+  data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
+  data-action="candidate_submission">
+</div>
             <div class="field full">
-              <button class="button" id="submitButton" type="submit">Submit Candidate Profile</button>
+              <button class="button" id="submitButton" type="submit">Submit Candidate Profile
+              </button>
               <div id="formStatus" role="status" aria-live="polite"></div>
             </div>
           </form>
@@ -298,6 +304,11 @@
       }
     });
   </script>
+  <script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  async
+  defer>
+</script>
   <script
   src="https://challenges.cloudflare.com/turnstile/v0/api.js"
   async
