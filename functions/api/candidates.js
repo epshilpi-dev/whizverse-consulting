@@ -83,8 +83,6 @@ if (
   }, 503);
 }
 
-let verification;
-
 try {
   const response = await fetch(
     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
