@@ -261,7 +261,11 @@
         resumeInput.setCustomValidity("");
       }
     });
-
+<div
+  class="cf-turnstile"
+  data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
+  data-action="candidate_submission">
+</div>
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       status.textContent = "";
@@ -294,5 +298,10 @@
       }
     });
   </script>
+  <script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  async
+  defer>
+</script>
 </body>
 </html>
