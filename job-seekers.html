@@ -162,7 +162,8 @@
         </aside>
 
         <div class="form-card">
-          <form id="candidateForm" enctype="multipart/form-data"><form id="candidateForm" method="POST" action="/api/candidates" enctype="multipart/form-data"> <div class="field">
+          <form id="candidateForm" method="POST" action="/api/candidates" enctype="multipart/form-data">
+            <div class="field">
               <label for="fullName">Full name *</label>
               <input id="fullName" name="fullName" autocomplete="name" maxlength="120" required>
             </div>
@@ -202,11 +203,9 @@
               </label>
               <span class="hint">Please publish a Privacy Policy explaining retention, access, deletion requests and contact details before accepting real candidate submissions.</span>
             </div>
-            <div
-  class="cf-turnstile"
-  data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
-  data-action="candidate_submission">
-</div>
+            <div class="cf-turnstile full"
+                 data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
+                 data-action="candidate_submission"></div>
             <div class="field full">
               <button class="button" id="submitButton" type="submit">Submit Candidate Profile
               </button>
@@ -266,16 +265,18 @@
         resumeInput.setCustomValidity("");
       }
     });
-<div
-  class="cf-turnstile"
-  data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
-  data-action="candidate_submission">
-</div>
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       status.textContent = "";
       status.style.color = "";
       if (!form.reportValidity()) return;
+
+      const turnstileResponse = form.querySelector('[name="cf-turnstile-response"]');
+      if (!turnstileResponse || !turnstileResponse.value) {
+        status.style.color = "#b42318";
+        status.textContent = "Please complete the security verification and try again.";
+        return;
+      }
 
       submitButton.disabled = true;
       submitButton.textContent = "Submitting…";
@@ -285,15 +286,21 @@
           method: "POST",
           body: new FormData(form)
         });
-        const result = await response.json();
+        let result;
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error("The server returned an unexpected response. Please try again later.");
+        }
 
-        if (!response.ok) {
-          throw new Error(result.error || "Unable to submit your profile.");
+        if (!response.ok || result.success === false) {
+          throw new Error(result.error || result.message || "Unable to submit your profile.");
         }
 
         status.style.color = "#087c70";
         status.textContent = "Your profile has been submitted successfully.";
         form.reset();
+        if (window.turnstile) window.turnstile.reset();
       } catch (error) {
         status.style.color = "#b42318";
         status.textContent = error.message || "Submission failed. Please try again later.";
@@ -303,11 +310,6 @@
       }
     });
   </script>
-  <script
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-  async
-  defer>
-</script>
   <script
   src="https://challenges.cloudflare.com/turnstile/v0/api.js"
   async
