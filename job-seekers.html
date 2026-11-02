@@ -203,9 +203,6 @@
               </label>
               <span class="hint">Please publish a Privacy Policy explaining retention, access, deletion requests and contact details before accepting real candidate submissions.</span>
             </div>
-            <div class="cf-turnstile full"
-                 data-sitekey="0x4AAAAAAFvHQe-3kudplgbD"
-                 data-action="candidate_submission"></div>
             <div class="field full">
               <button class="button" id="submitButton" type="submit">Submit Candidate Profile
               </button>
@@ -271,13 +268,6 @@
       status.style.color = "";
       if (!form.reportValidity()) return;
 
-      const turnstileResponse = form.querySelector('[name="cf-turnstile-response"]');
-      if (!turnstileResponse || !turnstileResponse.value) {
-        status.style.color = "#b42318";
-        status.textContent = "Please complete the security verification and try again.";
-        return;
-      }
-
       submitButton.disabled = true;
       submitButton.textContent = "Submitting…";
 
@@ -300,7 +290,6 @@
         status.style.color = "#087c70";
         status.textContent = "Your profile has been submitted successfully.";
         form.reset();
-        if (window.turnstile) window.turnstile.reset();
       } catch (error) {
         status.style.color = "#b42318";
         status.textContent = error.message || "Submission failed. Please try again later.";
@@ -310,10 +299,5 @@
       }
     });
   </script>
-  <script
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-  async
-  defer>
-</script>
 </body>
 </html>
