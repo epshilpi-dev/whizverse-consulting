@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b46">
+  <meta name="description" content="Request a free initial career profile evaluation from Whizverse Consulting for UK and European career opportunities.">
+  <title>Profile Review | Whizverse Consulting</title>
+  <style>
+    :root {
+      --navy: #102b46;
+      --navy-2: #183d5d;
+      --teal: #147d72;
+      --teal-dark: #0e625a;
+      --mint: #dff4ed;
+      --ink: #182b3b;
+      --muted: #5c6d7c;
+      --line: #dce5eb;
+      --paper: #ffffff;
+      --page: #f4f7fa;
+      --danger: #a4262c;
+      --shadow: 0 18px 48px rgba(16, 43, 70, .10);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .topbar {
+      background: rgba(255,255,255,.97);
+      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+    .nav {
+      max-width: 1160px; margin: auto; padding: 15px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    .brand { display: flex; align-items: center; text-decoration: none; min-width: 0; }
+    .brand-logo { display: block; width: 215px; max-width: min(52vw, 215px); height: auto; object-fit: contain; }
+
+    .nav-link { color: var(--navy); text-decoration: none; font-weight: 700; font-size: 14px; }
+    .nav-link:hover { color: var(--teal); }
+    .hero-wrap { background: linear-gradient(135deg, var(--navy) 0%, #173c5a 64%, #155e62 100%); color: #fff; overflow: hidden; position: relative; }
+    .hero-wrap:after {
+      content: ""; position: absolute; width: 440px; height: 440px; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%; right: -150px; top: -220px; box-shadow: 0 0 0 45px rgba(255,255,255,.025), 0 0 0 90px rgba(255,255,255,.025);
+      pointer-events: none;
+    }
+    .hero {
+      max-width: 1160px; margin: auto; padding: 64px 24px 58px;
+      display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr); gap: 48px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #b9eee0; font-size: 12px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .eyebrow-dot { width: 8px; height: 8px; background: #8ce0c7; border-radius: 50%; box-shadow: 0 0 0 5px rgba(140,224,199,.12); }
+    h1 { font-size: clamp(34px, 4.5vw, 54px); letter-spacing: -.045em; line-height: 1.08; margin: 18px 0 18px; max-width: 690px; }
+    .hero-copy { color: #dbe7f0; font-size: 17px; max-width: 640px; margin: 0; }
+    .hero-points { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+    .hero-pill { border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #f1f7fb; }
+    .hero-card { background: rgba(255,255,255,.98); color: var(--ink); border-radius: 18px; padding: 23px; box-shadow: 0 18px 50px rgba(0,0,0,.16); }
+    .hero-card h2 { margin: 0 0 13px; font-size: 16px; color: var(--navy); }
+    .process-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; }
+    .process-item + .process-item { border-top: 1px solid #edf1f4; }
+    .step-num { width: 30px; height: 30px; flex: 0 0 30px; display: grid; place-items: center; border-radius: 9px; background: var(--mint); color: var(--teal-dark); font-weight: 850; font-size: 13px; }
+    .process-item strong { display: block; font-size: 13px; color: var(--navy); }
+    .process-item span:last-child { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .main { max-width: 1160px; margin: auto; padding: 38px 24px 64px; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 26px; align-items: start; }
+    .form-card, .side-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .form-card { padding: clamp(20px, 3.4vw, 38px); }
+    .form-heading { margin-bottom: 27px; }
+    .form-heading h2 { font-size: 26px; line-height: 1.2; letter-spacing: -.025em; margin: 0 0 8px; color: var(--navy); }
+    .form-heading p { color: var(--muted); margin: 0; font-size: 14px; }
+    .section { padding: 24px 0; border-top: 1px solid #edf1f4; }
+    .section:first-of-type { border-top: 0; padding-top: 0; }
+    .section-title { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 17px; }
+    .section-icon { width: 38px; height: 38px; display: grid; place-items: center; flex: 0 0 38px; border-radius: 11px; background: #edf7f5; color: var(--teal-dark); }
+    .section-title h3 { margin: 0; font-size: 16px; color: var(--navy); }
+    .section-title p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label, .label { display: block; font-size: 13px; font-weight: 750; color: #263d50; margin-bottom: 7px; }
+    .optional { color: #7a8995; font-weight: 500; }
+    input, select, textarea {
+      width: 100%; border: 1px solid #cdd8e0; background: #fff; color: var(--ink);
+      border-radius: 10px; padding: 12px 13px; font: inherit; font-size: 14px; outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    input, select { min-height: 46px; }
+    textarea { min-height: 96px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: #94a1ab; }
+    input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(20,125,114,.13); }
+    .hint { color: #748390; font-size: 11px; margin-top: 6px; }
+    .upload-box { border: 1.5px dashed #9bbdb8; background: #f7fbfa; border-radius: 12px; padding: 17px; }
+    .upload-box input { border: 0; padding: 5px 0 0; min-height: auto; background: transparent; }
+    .upload-label { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+    .upload-label svg { color: var(--teal-dark); flex: 0 0 auto; }
+    .consent-box { background: #f7f9fb; border: 1px solid #e2e9ee; border-radius: 12px; padding: 15px; display: grid; gap: 13px; }
+    .check-row { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: #4d5f6d; }
+    .check-row input { width: 17px; height: 17px; min-height: 17px; margin: 2px 0 0; flex: 0 0 17px; accent-color: var(--teal); }
+    .check-row label { font-weight: 500; margin: 0; color: #4d5f6d; line-height: 1.5; }
+    .check-row a { color: var(--teal-dark); font-weight: 700; }
+    .submit-row { margin-top: 23px; }
+    .submit-btn { width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; border: 0; border-radius: 11px; padding: 15px 18px; color: #fff; background: var(--teal); font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(20,125,114,.2); transition: transform .16s ease, background .16s ease; }
+    .submit-btn:hover { background: var(--teal-dark); transform: translateY(-1px); }
+    .submit-btn:focus-visible { outline: 3px solid #8fd9c0; outline-offset: 3px; }
+    .submit-btn:disabled { opacity: .65; cursor: wait; transform: none; }
+    .submit-note { text-align: center; color: #778693; font-size: 11px; margin: 11px 0 0; }
+    .message { display: none; border-radius: 11px; padding: 14px 16px; margin: 0 0 18px; font-size: 13px; }
+    .message.success { display: block; color: #145a42; background: #e7f7ee; border: 1px solid #b9e7ca; }
+    .message.error { display: block; color: #842029; background: #fff0f0; border: 1px solid #f2c7ca; }
+    .side { display: grid; gap: 18px; }
+    .side-card { padding: 22px; box-shadow: 0 8px 24px rgba(16,43,70,.05); }
+    .side-card h3 { color: var(--navy); font-size: 16px; margin: 0 0 13px; }
+    .benefit { display: flex; gap: 10px; align-items: flex-start; margin: 13px 0; color: var(--muted); font-size: 12px; }
+    .benefit svg { color: var(--teal); flex: 0 0 auto; margin-top: 1px; }
+    .benefit strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+    .privacy-note { font-size: 12px; color: var(--muted); margin: 0; }
+    .footer { border-top: 1px solid var(--line); background: #fff; }
+    .footer-inner { max-width: 1160px; margin: auto; padding: 22px 24px; display: flex; justify-content: space-between; gap: 15px; color: #72818d; font-size: 11px; }
+    .footer strong { color: var(--navy); }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 48px; }
+      .hero-card { max-width: 560px; }
+      .main { grid-template-columns: 1fr; }
+      .side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .nav { padding: 12px 16px; }
+      .nav-link { font-size: 12px; }
+      .hero { padding: 39px 18px 36px; }
+      h1 { font-size: 36px; }
+      .hero-copy { font-size: 15px; }
+      .main { padding: 22px 12px 42px; }
+      .form-card { padding: 20px 16px; }
+      .grid, .side { grid-template-columns: 1fr; }
+      .footer-inner { padding: 19px 16px; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="Whizverse Consulting home">
+        <img class="brand-logo" src="/logo.png" alt="Whizverse Consulting" width="215" height="65">
+      </a>
+      <a class="nav-link" href="/job-seekers.html">Explore job seeker services <span aria-hidden="true">→</span></a>
+    </nav>
+  </header>
+
+  <section class="hero-wrap">
+    <div class="hero">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Career advisory · UK & Europe</div>
+        <h1>Your next career chapter deserves a clear plan.</h1>
+        <p class="hero-copy">Request a free initial profile evaluation to understand how your experience, skills and career goals may align with opportunities in the UK and Europe.</p>
+        <div class="hero-points">
+          <span class="hero-pill">✓ Free initial profile review</span>
+          <span class="hero-pill">✓ Practical, personalised guidance</span>
+          <span class="hero-pill">✓ Human-reviewed recommendations</span>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="How it works">
+        <h2>Three simple steps</h2>
+        <div class="process-item">
+          <span class="step-num">01</span>
+          <span><strong>Tell us about yourself</strong><span>Share your experience, skills and goals.</span></span>
+        </div>
+        <div class="process-item">
+          <span class="step-num">02</span>
+          <span><strong>Upload your resume</strong><span>Give us context about your professional journey.</span></span>
+        </div>
+        <div class="process-item">
+          <span class="step-num">03</span>
+          <span><strong>We review your profile</strong><span>Our next steps depend on your profile and goals.</span></span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <main class="main">
+    <section class="form-card" aria-labelledby="form-title">
+      <div class="form-heading">
+        <h2 id="form-title">Request your free profile evaluation</h2>
+        <p>Complete the form below. Fields marked optional can be skipped.</p>
+      </div>
+      <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+
+      <form id="profileForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="candidateType" value="career_advisory">
+        <input type="hidden" name="leadSource" value="website">
+        <input type="hidden" name="campaignName" value="profile-review">
+        <input type="hidden" name="privacyVersion" value="v1">
+
+        <section class="section">
+          <div class="section-title">
+            <span class="section-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c.7-3.5 3.1-5.2 7-5.2s6.3 1.7 7 5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
+            <span><h3>01. Your details</h3><p>How we can contact you and understand your background.</p></span>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="fullName">Full name *</label>
+              <input id="fullName" name="fullName" autocomplete="name" required maxlength="120" placeholder="As you use professionally">
+            </div>
+            <div class="field">
+              <label for="email">Email address *</label>
+              <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+            </div>
+            <div class="field">
+              <label for="phone">Phone number *</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="+91 98765 43210">
+            </div>
+            <div class="field">
+              <label for="currentLocation">Current location *</label>
+              <input id="currentLocation" name="currentLocation" autocomplete="address-level2" required maxlength="120" placeholder="City, country">
+            </div>
+            <div class="field">
+              <label for="currentDesignation">Current designation <span class="optional">(optional)</span></label>
+              <input id="currentDesignation" name="currentDesignation" maxlength="120" placeholder="e.g. Senior Project Manager">
+            </div>
+            <div class="field">
+              <label for="industry">Industry <span class="optional">(optional)</span></label>
+              <input id="industry" name="industry" maxlength="120" placeholder="e.g. Financial services">
+            </div>
+            <div class="field">
+              <label for="experienceYears">Years of experience *</label>
+              <input id="experienceYears" name="experienceYears" type="number" min="0" max="60" step="1" required placeholder="e.g. 12">
+            </div>
+            <div class="field">
+              <label for="preferredLocation">Preferred work location <span class="optional">(optional)</span></label>
+              <input id="preferredLocation" name="preferredLocation" maxlength="120" placeholder="City or region, if known">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <span class="section-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19.5V5.8c0-.9.7-1.6 1.6-1.6H20v15.3H5.6c-.9 0-1.6.7-1.6 1.6Zm0 0c0-.9.7-1.6 1.6-1.6H20M8 8h8M8 11.5h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><h3>02. Your career goals</h3><p>Help us understand the roles and countries you are considering.</p></span>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="targetRole">Target role or job title *</label>
+              <input id="targetRole" name="targetRole" required maxlength="120" placeholder="e.g. Technology Programme Director">
+            </div>
+            <div class="field">
+              <label for="preferredCountries">Preferred countries *</label>
+              <input id="preferredCountries" name="preferredCountries" required maxlength="500" placeholder="e.g. UK, Ireland, Netherlands">
+              <div class="hint">Enter one or more countries.</div>
+            </div>
+            <div class="field full">
+              <label for="skills">Key skills and expertise <span class="optional">(optional)</span></label>
+              <textarea id="skills" name="skills" maxlength="1000" placeholder="Summarise your strongest skills, tools, qualifications or achievements."></textarea>
+            </div>
+            <div class="field full">
+              <label for="linkedinUrl">LinkedIn profile URL <span class="optional">(optional)</span></label>
+              <input id="linkedinUrl" name="linkedinUrl" type="url" maxlength="300" placeholder="https://www.linkedin.com/in/your-profile">
+            </div>
+            <div class="field full">
+              <label for="careerReason">What would you like to achieve in your next career move? <span class="optional">(optional)</span></label>
+              <textarea id="careerReason" name="careerReason" maxlength="1000" placeholder="Tell us about the role, growth or change you are looking for."></textarea>
+            </div>
+            <div class="field full">
+              <label for="ukEuropeReason">Why are you considering the UK or Europe? <span class="optional">(optional)</span></label>
+              <textarea id="ukEuropeReason" name="ukEuropeReason" maxlength="1000" placeholder="Share your relocation goals or any preferences that would help us understand your plans."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <span class="section-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M4 14.5v4A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><h3>03. Upload your resume</h3><p>Share a recent version so your profile can be reviewed in context.</p></span>
+          </div>
+          <div class="upload-box">
+            <div class="upload-label">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 3.5h7l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z" stroke="currentColor" stroke-width="1.7"/><path d="M14 3.5V8h4M8.5 15h7M8.5 18h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <div><strong style="display:block;color:#183d5d;font-size:13px">Choose your resume file</strong><span style="color:#71818d;font-size:11px">PDF, DOC or DOCX · Maximum 5 MB</span></div>
+            </div>
+            <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required aria-describedby="resumeHint">
+            <div class="hint" id="resumeHint">Please upload a readable, up-to-date resume. Do not upload identity documents or sensitive personal records.</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <span class="section-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3 19 6v5c0 4.5-2.9 7.8-7 10-4.1-2.2-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><h3>04. Privacy and consent</h3><p>You stay in control of how your information is used.</p></span>
+          </div>
+          <div class="consent-box">
+            <div class="check-row">
+              <input id="consentPrivacy" name="consentPrivacy" type="checkbox" value="yes" required>
+              <label for="consentPrivacy">I have read and agree to the <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>. I understand that my information and resume will be used to review my profile and respond to this request. *</label>
+            </div>
+            <div class="check-row">
+              <input id="consentAIProcessing" name="consentAIProcessing" type="checkbox" value="yes">
+              <label for="consentAIProcessing">I consent to my profile and resume being processed by an AI service to help prepare a draft career assessment. This is optional and can be left unchecked. Any assessment shared with me will be subject to human review.</label>
+            </div>
+            <div class="check-row">
+              <input id="consentMarketing" name="consentMarketing" type="checkbox" value="yes">
+              <label for="consentMarketing">I would like to receive occasional career resources and service updates from Whizverse Consulting. This is optional and is not required for this evaluation request.</label>
+            </div>
+          </div>
+        </section>
+
+        <div class="submit-row">
+          <button id="submitBtn" class="submit-btn" type="submit">
+            Submit my profile for review
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="submit-note">Submitting this form does not guarantee employment, a job offer or visa eligibility.</p>
+        </div>
+      </form>
+    </section>
+
+    <aside class="side">
+      <section class="side-card">
+        <h3>What you can expect</h3>
+        <div class="benefit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><strong>A considered first look</strong>We review your background and stated career goals.</span>
+        </div>
+        <div class="benefit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><strong>Relevant career direction</strong>Potential roles and areas to strengthen may be discussed.</span>
+        </div>
+        <div class="benefit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><strong>Clear next steps</strong>If a paid advisory service may be useful, details can be shared separately.</span>
+        </div>
+      </section>
+      <section class="side-card">
+        <h3>Your information matters</h3>
+        <p class="privacy-note">Your resume is submitted through our secure registration workflow. AI processing is not triggered simply by submitting this form; it requires the optional consent above and a separate action by the administrator.</p>
+      </section>
+      <section class="side-card">
+        <h3>Need to return later?</h3>
+        <p class="privacy-note">You can review the information before submitting. Please ensure your email and phone number are correct so we can contact you about your request.</p>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span><strong>WHIZVERSE CONSULTING</strong> · Career advisory for UK & Europe</span>
+      <span>© <span id="year"></span> Whizverse Consulting. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById("profileForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const message = document.getElementById("formMessage");
+    const resumeInput = document.getElementById("resume");
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    resumeInput.addEventListener("change", () => {
+      const file = resumeInput.files && resumeInput.files[0];
+      if (file && file.size > 5 * 1024 * 1024) {
+        resumeInput.setCustomValidity("Please choose a resume file no larger than 5 MB.");
+        resumeInput.reportValidity();
+      } else {
+        resumeInput.setCustomValidity("");
+      }
+    });
+
+    function showMessage(type, text) {
+      message.className = "message " + type;
+      message.textContent = text;
+      message.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.className = "message";
+      message.textContent = "";
+
+      if (!form.reportValidity()) return;
+
+      const file = resumeInput.files && resumeInput.files[0];
+      if (!file) {
+        showMessage("error", "Please attach your resume before submitting.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showMessage("error", "Your resume must be 5 MB or smaller.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting your profile…";
+
+      try {
+        const response = await fetch("/api/candidates", {
+          method: "POST",
+          body: new FormData(form),
+          headers: { "Accept": "application/json" }
+        });
+        let result = {};
+        try { result = await response.json(); } catch (_) {}
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "We could not submit your profile. Please try again.");
+        }
+
+        form.reset();
+        resumeInput.setCustomValidity("");
+        showMessage("success", result.message || "Thank you. Your profile has been submitted successfully. A confirmation email will be sent if email delivery is available.");
+      } catch (error) {
+        showMessage("error", error.message || "Something went wrong. Please try again in a moment.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit my profile for review <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+    });
+  </script>
+</body>
+</html>
