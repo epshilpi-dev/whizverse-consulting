@@ -263,12 +263,21 @@ export async function onRequestPatch({ request, env }) {
         message: "Assessment could not be updated. It may already be approved."
       }, 409);
     }
+await env.DB.prepare(`
+  UPDATE candidates
+  SET evaluation_status = COALESCE(
+    (
+      SELECT evaluation_status
+      FROM candidate_evaluations
+      WHERE candidate_id = ?
+      ORDER BY created_at DESC, rowid DESC
+      LIMIT 1
+    ),
+    'not_started'
+  )
+  WHERE id = ?
+`).bind(existing.candidate_id, existing.candidate_id).run();
 
-    await env.DB.prepare(`
-      UPDATE candidates
-      SET evaluation_status = ?
-      WHERE id = ?
-    `).bind(status, existing.candidate_id).run();
 
     return json({
       success: true,
