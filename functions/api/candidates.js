@@ -1,3 +1,4 @@
+import { sendRegistrationEmail } from "./_email.js";
 
 const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 
@@ -73,7 +74,9 @@ function hasValidFileSignature(bytes, extension) {
   return false;
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
+
   if (!env.DB || !env.RESUMES) {
     return json({
       success: false,
@@ -356,6 +359,22 @@ export async function onRequestPost({ request, env }) {
       "not_started"
     ).run();
 
+    // Candidate is safely saved. Schedule the confirmation email
+    // independently so email failures cannot undo registration.
+    const emailTask = sendRegistrationEmail(env, {
+      id,
+      full_name: fullName,
+      email,
+      candidate_type: candidateType,
+    });
+
+    if (typeof context.waitUntil === "function") {
+      context.waitUntil(emailTask);
+    } else {
+      // Fallback for environments without waitUntil.
+      await emailTask;
+    }
+
     return json({
       success: true,
       message: candidateType === "career_advisory"
@@ -377,11 +396,9 @@ export async function onRequestPost({ request, env }) {
       candidateType,
     });
 
-    
     return json({
       success: false,
       error: "Unable to save your profile right now. Please try again later.",
     }, 500);
   }
 }
-
