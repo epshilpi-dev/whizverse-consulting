@@ -377,16 +377,11 @@ export async function onRequestPost({ request, env }) {
       candidateType,
     });
 
-    return json({
-      success: false,
-      error: "Unable to save your profile right now. Please try again later.",
-    }, 500);
-  
-
-
+    
     return json({
       success: false,
       error: "Unable to save your profile right now. Please try again later.",
     }, 500);
   }
 }
+
