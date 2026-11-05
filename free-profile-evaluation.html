@@ -1,1 +1,515 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get a free professional profile evaluation for UK and European career opportunities with Whizverse Consulting.">
+  <title>Free Profile Evaluation | Whizverse Consulting</title>
+  <style>
+    :root {
+      --navy: #102b46;
+      --blue: #1769aa;
+      --light: #f3f7fb;
+      --text: #25364a;
+      --muted: #64748b;
+      --border: #dce5ee;
+      --green: #16865b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--light);
+      line-height: 1.6;
+    }
+
+    .topbar {
+      background: white;
+      padding: 17px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--navy);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .topbar a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #102b46, #174e79);
+      color: white;
+      padding: 65px 20px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    .eyebrow {
+      color: #b8dcf6;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.15;
+      margin: 16px 0;
+    }
+
+    .hero p {
+      color: #e1edf7;
+      font-size: 17px;
+    }
+
+    .free-label {
+      display: inline-block;
+      background: #d9f6e9;
+      color: #126b48;
+      padding: 7px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      margin-top: 14px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 38px auto;
+      padding: 0 18px;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .benefit {
+      background: white;
+      padding: 19px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .benefit strong {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+
+    .form-card {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 30px rgba(16,43,70,.06);
+    }
+
+    h2 { color: var(--navy); }
+
+    .section-title {
+      color: var(--navy);
+      font-size: 19px;
+      margin: 30px 0 15px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+      color: var(--text);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #b9d9f3;
+      border-color: var(--blue);
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 15px 0;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .consent input {
+      width: auto;
+      margin-top: 5px;
+    }
+
+    .submit {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: var(--blue);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 9px;
+      cursor: pointer;
+      margin-top: 22px;
+    }
+
+    .submit:hover { background: var(--navy); }
+    .submit:disabled { opacity: .6; cursor: wait; }
+
+    #message {
+      display: none;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 18px;
+      font-weight: 600;
+    }
+
+    .success {
+      display: block !important;
+      background: #e1f5e9;
+      color: #126b48;
+    }
+
+    .error {
+      display: block !important;
+      background: #feecec;
+      color: #a52b2b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media(max-width: 650px) {
+      .grid { grid-template-columns: 1fr; }
+      .form-card { padding: 21px; }
+      .topbar { padding: 15px 5%; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">WHIZVERSE CONSULTING</div>
+  <a href="job-seekers.html">Job Portal</a>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="eyebrow">UK & European Career Advisory</div>
+    <h1>Your Global Career Journey Starts Here.</h1>
+    <p>
+      Get a free professional profile evaluation and understand
+      how your experience aligns with international career opportunities.
+    </p>
+    <div class="free-label">100% Free Initial Profile Evaluation</div>
+    <p style="font-size:13px;margin-top:15px">
+      No upfront payment. No obligation to purchase a service.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+
+  <section class="benefits">
+    <div class="benefit">
+      <strong>Profile Assessment</strong>
+      Initial review of your professional background and experience.
+    </div>
+    <div class="benefit">
+      <strong>Global Positioning</strong>
+      Understand your career positioning for UK and European markets.
+    </div>
+    <div class="benefit">
+      <strong>Improvement Areas</strong>
+      Identify potential gaps in your resume and professional profile.
+    </div>
+    <div class="benefit">
+      <strong>Recommended Next Steps</strong>
+      Receive guidance on how to strengthen your career profile.
+    </div>
+  </section>
+
+  <section class="form-card">
+    <h2>Request Your Free Profile Evaluation</h2>
+    <p class="hint">
+      Complete the details below. Our team will review your profile
+      and contact you by email.
+    </p>
+
+    <form id="evaluationForm" enctype="multipart/form-data">
+
+      <input type="hidden" name="candidateType" value="career_advisory">
+      <input type="hidden" name="leadSource" value="website">
+      <input type="hidden" name="campaignName" value="free-profile-evaluation">
+      <input type="hidden" name="privacyVersion" value="v1">
+
+      <h3 class="section-title">1. Personal Information</h3>
+
+      <div class="grid">
+        <div class="field">
+          <label for="fullName">Full Name *</label>
+          <input id="fullName" name="fullName" required maxlength="120" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email Address *</label>
+          <input id="email" name="email" type="email" required maxlength="254" autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="phone">Mobile Number *</label>
+          <input id="phone" name="phone" type="tel" required maxlength="30" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label for="currentLocation">Current Location *</label>
+          <input id="currentLocation" name="currentLocation" required maxlength="120" placeholder="e.g. Pune, India">
+        </div>
+      </div>
+
+      <h3 class="section-title">2. Professional Background</h3>
+
+      <div class="grid">
+        <div class="field">
+          <label for="currentDesignation">Current Designation *</label>
+          <input id="currentDesignation" name="currentDesignation" required maxlength="120">
+        </div>
+
+        <div class="field">
+          <label for="industry">Industry *</label>
+          <select id="industry" name="industry" required>
+            <option value="">Select industry</option>
+            <option>Banking & Financial Services</option>
+            <option>Insurance</option>
+            <option>Information Technology</option>
+            <option>Consulting</option>
+            <option>Healthcare</option>
+            <option>Engineering & Manufacturing</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="experienceYears">Total Experience (Years) *</label>
+          <input id="experienceYears" name="experienceYears" type="number" min="0" max="60" step="1" required>
+        </div>
+
+        <div class="field">
+          <label for="targetRole">Target Role *</label>
+          <input id="targetRole" name="targetRole" required maxlength="120" placeholder="e.g. Project Director">
+        </div>
+
+        <div class="field full">
+          <label for="skills">Key Skills / Areas of Expertise</label>
+          <textarea id="skills" name="skills" maxlength="1000" placeholder="Mention your key skills, technologies and professional strengths"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="linkedinUrl">LinkedIn Profile URL</label>
+          <input id="linkedinUrl" name="linkedinUrl" type="url" maxlength="300" placeholder="https://www.linkedin.com/in/your-profile">
+        </div>
+      </div>
+
+      <h3 class="section-title">3. International Career Preferences</h3>
+
+      <div class="grid">
+        <div class="field full">
+          <label for="preferredCountries">Preferred Countries *</label>
+          <input id="preferredCountries" name="preferredCountries" required maxlength="500" placeholder="e.g. UK, Ireland, Germany, Netherlands">
+        </div>
+
+        <div class="field full">
+          <label for="careerReason">Why are you exploring a career change or new opportunity?</label>
+          <textarea id="careerReason" name="careerReason" maxlength="1000"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="ukEuropeReason">Why are you considering the UK or Europe?</label>
+          <textarea id="ukEuropeReason" name="ukEuropeReason" maxlength="1000"></textarea>
+        </div>
+      </div>
+
+      <h3 class="section-title">4. Upload Your Resume</h3>
+
+      <div class="field">
+        <label for="resume">Upload Resume *</label>
+        <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx" required>
+        <span class="hint">PDF, DOC or DOCX. Maximum file size: 5 MB.</span>
+      </div>
+
+      <h3 class="section-title">5. Consent & Privacy</h3>
+
+      <label class="consent">
+        <input type="checkbox" name="consentPrivacy" value="yes" required>
+        <span>
+          I consent to Whizverse Consulting collecting and processing
+          my personal information and resume for the purpose of profile
+          evaluation and career advisory services. *
+        </span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" name="consentAIProcessing" value="yes">
+        <span>
+          I separately consent to my resume and professional profile
+          being processed using AI-assisted tools to prepare a draft
+          career assessment. Human review will take place before
+          any assessment is shared with me. This consent is optional.
+        </span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" name="consentMarketing" value="yes">
+        <span>
+          I would like to receive occasional career updates and
+          relevant opportunities from Whizverse Consulting.
+          This consent is optional.
+        </span>
+      </label>
+
+      <button class="submit" id="submitButton" type="submit">
+        Submit My Free Profile Evaluation
+      </button>
+
+      <div id="message" role="status" aria-live="polite"></div>
+
+      <p class="hint" style="text-align:center;margin-top:15px">
+        Submitting this form does not guarantee employment,
+        a job interview, visa sponsorship or immigration approval.
+      </p>
+
+    </form>
+  </section>
+</main>
+
+<footer>
+  © <span id="year"></span> Whizverse Consulting.
+  All rights reserved.
+</footer>
+
+<script>
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  const form = document.getElementById("evaluationForm");
+  const message = document.getElementById("message");
+  const submitButton = document.getElementById("submitButton");
+  const resumeInput = document.getElementById("resume");
+
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    message.className = "";
+    message.style.display = "none";
+
+    const file = resumeInput.files[0];
+
+    if (!file) {
+      message.textContent = "Please upload your resume.";
+      message.className = "error";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      message.textContent = "Resume must be 5 MB or smaller.";
+      message.className = "error";
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting your profile...";
+
+    try {
+      const response = await fetch("/api/candidates", {
+        method: "POST",
+        body: new FormData(form)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error || "Unable to submit your profile."
+        );
+      }
+
+      message.textContent =
+        "Thank you! Your profile has been submitted successfully. Our team will review your details and contact you by email.";
+      message.className = "success";
+
+      form.reset();
+
+    } catch (error) {
+      message.textContent =
+        error.message || "Something went wrong. Please try again.";
+      message.className = "error";
+
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent =
+        "Submit My Free Profile Evaluation";
+    }
+  });
+</script>
+
+</body>
+</html>
