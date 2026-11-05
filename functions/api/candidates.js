@@ -389,4 +389,3 @@ export async function onRequestPost({ request, env }) {
       error: "Unable to save your profile right now. Please try again later.",
     }, 500);
   }
-}
