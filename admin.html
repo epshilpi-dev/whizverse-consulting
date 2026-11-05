@@ -472,6 +472,38 @@
       font-size: 12px;
     }
 
+
+    .view-tabs { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 18px; }
+    .tab-btn { border:1px solid #cfd8e5; background:#fff; color:var(--text); border-radius:9px; padding:11px 16px; font-weight:700; }
+    .tab-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+    .profile-modal { position:fixed; inset:0; z-index:1000; background:rgba(15,23,42,.58); display:flex; align-items:flex-start; justify-content:center; padding:24px; overflow:auto; }
+    .profile-card { width:min(1050px,100%); background:#fff; border-radius:14px; box-shadow:0 20px 60px #0003; margin:auto; }
+    .profile-head { display:flex; justify-content:space-between; align-items:flex-start; gap:15px; padding:20px 24px; border-bottom:1px solid var(--border); }
+    .profile-head h3 { margin:0 0 5px; font-size:20px; }
+    .profile-content { padding:22px 24px; }
+    .detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .detail-item { border:1px solid var(--border); border-radius:9px; padding:12px; min-width:0; }
+    .detail-label { display:block; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:5px; }
+    .detail-value { overflow-wrap:anywhere; white-space:pre-wrap; }
+    .section-title { font-size:15px; margin:22px 0 12px; }
+    .consent-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .consent-chip { border-radius:20px; padding:5px 9px; font-size:11px; font-weight:700; background:#f2f4f7; color:#475467; }
+    .consent-yes { background:var(--green-light); color:var(--green); }
+    .consent-no { background:var(--red-light); color:var(--red); }
+    .evaluation-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:18px; }
+    .evaluation-list { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+    .evaluation-item { padding:13px; border-bottom:1px solid var(--border); cursor:pointer; }
+    .evaluation-item:last-child { border-bottom:0; }
+    .evaluation-item.selected { background:var(--blue-light); }
+    .evaluation-item strong { display:block; margin-bottom:4px; }
+    .assessment-form label { display:block; font-size:12px; font-weight:700; margin:12px 0 6px; }
+    .assessment-form input, .assessment-form select, .assessment-form textarea { width:100%; }
+    .assessment-form textarea { min-height:150px; resize:vertical; padding:11px 12px; border:1px solid #cfd8e5; border-radius:8px; font:inherit; }
+    .form-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+    .inline-note { background:#fffaeb; border:1px solid #fedf89; color:#93370d; padding:10px 12px; border-radius:8px; font-size:12px; margin-top:12px; }
+    .profile-resume { display:inline-flex; margin-top:12px; }
+    @media(max-width:760px) { .profile-modal { padding:8px; } .profile-head,.profile-content { padding:16px; } .detail-grid,.evaluation-layout { grid-template-columns:1fr; } }
+
     @media (max-width: 1000px) {
       .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       main { padding: 22px 18px; }
@@ -590,11 +622,16 @@
       </article>
     </section>
 
+    <div class="view-tabs" role="tablist" aria-label="Candidate category">
+      <button id="jobSeekersTab" class="tab-btn active" type="button" role="tab" aria-selected="true">Job Seekers</button>
+      <button id="careerAdvisoryTab" class="tab-btn" type="button" role="tab" aria-selected="false">Career Advisory</button>
+    </div>
+
     <section class="panel">
       <div class="panel-header">
         <div>
-          <h3>Candidate register</h3>
-          <p>Search and review candidate profiles and submitted resumes.</p>
+          <h3 id="registerTitle">Job Seeker Register</h3>
+          <p id="registerSubtitle">Search applications, review candidate profiles and access submitted resumes.</p>
         </div>
         <span id="recordCount" class="muted small">Loading records…</span>
       </div>
@@ -631,11 +668,12 @@
             <tr>
               <th>Candidate</th>
               <th>Contact details</th>
-              <th>Target role</th>
+              <th id="roleColumnHeading">Target role</th>
               <th>Preferred location</th>
               <th>Experience</th>
               <th>Application status</th>
               <th>Resume</th>
+              <th>Profile</th>
             </tr>
           </thead>
           <tbody id="rows"></tbody>
@@ -661,6 +699,50 @@
       </div>
     </section>
   </section>
+
+  <section id="profileModal" class="profile-modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="profile-card">
+      <div class="profile-head">
+        <div><h3 id="profileTitle">Candidate profile</h3><div id="profileSub" class="muted small"></div></div>
+        <button id="closeProfileBtn" class="btn btn-secondary" type="button">Close</button>
+      </div>
+      <div class="profile-content">
+        <div id="profileDetails" class="detail-grid"></div>
+        <div id="consentDetails" class="consent-row"></div>
+        <a id="profileResume" class="btn btn-secondary profile-resume" href="#" target="_blank" rel="noopener">↗ View / download resume</a>
+        <div id="evaluationSection">
+        <h4 class="section-title">HR assessment history</h4>
+        <div class="evaluation-layout">
+          <div>
+            <div class="form-actions" style="margin:0 0 10px">
+              <button id="newEvaluationBtn" class="btn btn-primary" type="button">＋ New assessment</button>
+            </div>
+            <div id="evaluationHistory" class="evaluation-list"><div class="empty-state">Loading assessment history…</div></div>
+          </div>
+          <div class="assessment-form">
+            <div id="assessmentHint" class="muted small">Select an assessment or create a new one.</div>
+            <label for="reviewedBy">Reviewed by</label>
+            <input id="reviewedBy" maxlength="120" placeholder="HR reviewer name">
+            <label for="evaluationStatus">Assessment status</label>
+            <select id="evaluationStatus">
+              <option value="pending">Pending</option>
+              <option value="in_review">In review</option>
+              <option value="changes_requested">Changes requested</option>
+              <option value="approved">Approved</option>
+            </select>
+            <label for="humanNotes">HR assessment notes</label>
+            <textarea id="humanNotes" maxlength="20000" placeholder="Record role alignment, strengths, gaps, market positioning and recommendations..."></textarea>
+            <div class="form-actions">
+              <button id="saveEvaluationBtn" class="btn btn-primary" type="button" disabled>Save assessment</button>
+            </div>
+            <div id="assessmentMessage" class="message" role="status" aria-live="polite"></div>
+            <div class="inline-note">AI evaluation is not enabled in this dashboard. AI consent is displayed for reference only; no AI processing is triggered here. Approval is an internal HR action and does not automatically send an evaluation to the candidate.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>Whizverse Consulting · Candidate Administration · Restricted access</footer>
@@ -672,6 +754,10 @@
   let total = 0;
   const pageSize = 25;
   let loadingCandidates = false;
+  let candidateType = "job_seeker";
+  let activeCandidateId = null;
+  let activeEvaluationId = null;
+  let activeEvaluationApproved = false;
 
   async function api(url, options = {}) {
     const response = await fetch(url, {
@@ -844,6 +930,7 @@
       const params = new URLSearchParams({
         q: $("search").value.trim(),
         status: $("status").value,
+        candidateType,
         page: String(page)
       });
 
@@ -852,6 +939,11 @@
         ? data.candidates : [];
 
       total = Number(data.total || 0);
+      $("registerTitle").textContent = candidateType === "career_advisory" ? "Career Advisory Register" : "Job Seeker Register";
+      $("registerSubtitle").textContent = candidateType === "career_advisory"
+        ? "Review international career advisory leads, consent and HR assessments."
+        : "Search applications, review candidate profiles and access submitted resumes.";
+      $("roleColumnHeading").textContent = candidateType === "career_advisory" ? "Current designation" : "Target role";
       const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
       // If records were removed while viewing a later page, go back safely.
@@ -866,30 +958,37 @@
 
         tr.appendChild(makeCandidateCell(candidate));
         tr.appendChild(makeContactCell(candidate));
-        tr.appendChild(makeCell(candidate.target_role));
-        tr.appendChild(makeCell(candidate.preferred_location));
-        tr.appendChild(makeCell(
-          candidate.experience_years == null
-            ? "—"
-            : `${candidate.experience_years} years`
-        ));
+        tr.appendChild(makeCell(candidateType === "career_advisory" ? candidate.current_designation : candidate.target_role));
+        tr.appendChild(makeCell(candidateType === "career_advisory" ? candidate.preferred_countries : candidate.preferred_location));
+        tr.appendChild(makeCell(candidate.experience_years == null ? "—" : `${candidate.experience_years} years`));
 
         const statusCell = document.createElement("td");
         statusCell.appendChild(statusBadge(candidate.status));
+        if (candidateType === "career_advisory") {
+          const evalLabel = document.createElement("div");
+          evalLabel.className = "candidate-sub";
+          evalLabel.textContent = `Assessment: ${String(candidate.evaluation_status || "not_started").replaceAll("_", " ")}`;
+          statusCell.appendChild(evalLabel);
+        }
         tr.appendChild(statusCell);
 
         const resumeCell = document.createElement("td");
         const link = document.createElement("a");
         link.className = "resume-link";
-        link.href = "/api/admin/resume?id=" +
-          encodeURIComponent(candidate.id);
+        link.href = "/api/admin/resume?id=" + encodeURIComponent(candidate.id);
         link.textContent = "↗ View / download";
-        link.setAttribute(
-          "aria-label",
-          `View or download resume for ${candidate.full_name || "candidate"}`
-        );
+        link.setAttribute("aria-label", `View or download resume for ${candidate.full_name || "candidate"}`);
         resumeCell.appendChild(link);
         tr.appendChild(resumeCell);
+
+        const profileCell = document.createElement("td");
+        const profileButton = document.createElement("button");
+        profileButton.type = "button";
+        profileButton.className = "btn btn-secondary";
+        profileButton.textContent = candidateType === "career_advisory" ? "Review profile" : "View profile";
+        profileButton.addEventListener("click", () => openCandidateProfile(candidate.id));
+        profileCell.appendChild(profileButton);
+        tr.appendChild(profileCell);
 
         $("rows").appendChild(tr);
       }
@@ -928,6 +1027,233 @@
       setButtonBusy("refreshBtn", false, "Refreshing…", "↻ Refresh");
     }
   }
+
+  function detailItem(label, value) {
+    const wrap = document.createElement("div");
+    wrap.className = "detail-item";
+    const title = document.createElement("span");
+    title.className = "detail-label";
+    title.textContent = label;
+    const content = document.createElement("div");
+    content.className = "detail-value";
+    content.textContent = value == null || value === "" ? "—" : String(value);
+    wrap.append(title, content);
+    return wrap;
+  }
+
+  function consentChip(label, granted) {
+    const chip = document.createElement("span");
+    chip.className = "consent-chip " + (granted ? "consent-yes" : "consent-no");
+    chip.textContent = `${label}: ${granted ? "Yes" : "No"}`;
+    return chip;
+  }
+
+  function setAssessmentMessage(message, type = "info") {
+    const el = $("assessmentMessage");
+    el.textContent = message;
+    el.className = "message";
+    if (message) el.classList.add(type === "error" ? "message-error" : type === "success" ? "message-success" : "message-info");
+  }
+
+  async function openCandidateProfile(id) {
+    activeCandidateId = id;
+    activeEvaluationId = null;
+    activeEvaluationApproved = false;
+    $("profileModal").classList.remove("hidden");
+    $("profileDetails").replaceChildren();
+    $("consentDetails").replaceChildren();
+    $("evaluationHistory").textContent = "Loading assessment history…";
+    $("profileTitle").textContent = "Loading candidate profile…";
+    $("profileSub").textContent = "";
+    $("humanNotes").value = "";
+    $("reviewedBy").value = "";
+    $("evaluationStatus").value = "pending";
+    $("saveEvaluationBtn").disabled = true;
+    $("assessmentHint").textContent = "Select an assessment or create a new one.";
+    setAssessmentMessage("");
+
+    try {
+      const [profileData, historyData] = await Promise.all([
+        api("/api/admin/candidate-detail?id=" + encodeURIComponent(id)),
+        api("/api/admin/evaluations?candidateId=" + encodeURIComponent(id))
+      ]);
+      const c = profileData.candidate;
+      $("profileTitle").textContent = c.full_name || "Candidate profile";
+      $("profileSub").textContent = `${c.email || ""} · ${c.candidate_type === "career_advisory" ? "Career Advisory" : "Job Seeker"} · Registered ${formatDate(c.created_at)}`;
+      $("evaluationSection").classList.toggle("hidden", c.candidate_type !== "career_advisory");
+
+      const fields = c.candidate_type === "career_advisory" ? [
+        ["Current location", c.current_location], ["Current designation", c.current_designation],
+        ["Industry", c.industry], ["Experience", c.experience_years == null ? "—" : `${c.experience_years} years`],
+        ["Target role", c.target_role], ["Preferred countries", c.preferred_countries],
+        ["LinkedIn", c.linkedin_url], ["Skills", c.skills],
+        ["Career reason", c.career_reason], ["Why UK / Europe", c.uk_europe_reason],
+        ["Lead source", c.lead_source], ["Campaign", c.campaign_name],
+        ["Email", c.email], ["Phone", c.phone]
+      ] : [
+        ["Target role", c.target_role], ["Preferred location", c.preferred_location],
+        ["Experience", c.experience_years == null ? "—" : `${c.experience_years} years`],
+        ["Skills", c.skills], ["Email", c.email], ["Phone", c.phone]
+      ];
+      for (const [label, value] of fields) $("profileDetails").appendChild(detailItem(label, value));
+      if (c.linkedin_url) {
+        // LinkedIn URL remains plain text in the profile; it is not opened automatically.
+      }
+      $("consentDetails").append(
+        consentChip("Privacy consent", Number(c.consent_privacy) === 1),
+        consentChip("AI processing consent", Number(c.consent_ai_processing) === 1),
+        consentChip("Marketing consent", Number(c.consent_marketing) === 1)
+      );
+      const consentMeta = document.createElement("div");
+      consentMeta.className = "small muted";
+      consentMeta.style.width = "100%";
+      consentMeta.textContent = `Privacy version: ${c.privacy_version || "—"} · Consent recorded: ${formatDate(c.consent_at)} · AI consent recorded: ${formatDate(c.ai_consent_at)}`;
+      $("consentDetails").appendChild(consentMeta);
+      $("profileResume").href = "/api/admin/resume?id=" + encodeURIComponent(id);
+      renderEvaluationHistory(historyData.evaluations || []);
+    } catch (error) {
+      $("profileTitle").textContent = "Could not load candidate profile";
+      $("profileDetails").textContent = error.message || "Please try again.";
+      $("evaluationHistory").textContent = "Assessment history unavailable.";
+      if (error.message === "Unauthorized.") displayLogin();
+    }
+  }
+
+  function renderEvaluationHistory(items) {
+    const list = $("evaluationHistory");
+    list.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "No assessments yet. Create the first HR assessment.";
+      list.appendChild(empty);
+      clearAssessmentEditor();
+      return;
+    }
+    for (const item of items) {
+      const row = document.createElement("div");
+      row.className = "evaluation-item" + (item.id === activeEvaluationId ? " selected" : "");
+      row.dataset.evaluationId = item.id;
+      const heading = document.createElement("strong");
+      heading.textContent = String(item.evaluation_status || "pending").replaceAll("_", " ").toUpperCase();
+      const meta = document.createElement("div");
+      meta.className = "small muted";
+      meta.textContent = `${formatDate(item.created_at)} · ${item.reviewed_by || "Not assigned"}`;
+      row.append(heading, meta);
+      row.addEventListener("click", () => selectEvaluation(item));
+      list.appendChild(row);
+    }
+    const selectedItem = items.find(item => item.id === activeEvaluationId) || items[0];
+    selectEvaluation(selectedItem);
+  }
+
+  function clearAssessmentEditor() {
+    activeEvaluationId = null;
+    activeEvaluationApproved = false;
+    $("assessmentHint").textContent = "No assessment selected. Create a new assessment to begin.";
+    $("humanNotes").value = "";
+    $("reviewedBy").value = "";
+    $("evaluationStatus").value = "pending";
+    $("saveEvaluationBtn").disabled = true;
+    $("evaluationStatus").disabled = true;
+  }
+
+  function selectEvaluation(item) {
+    activeEvaluationId = item.id;
+    activeEvaluationApproved = item.evaluation_status === "approved";
+    $("assessmentHint").textContent = `Assessment created ${formatDate(item.created_at)}${item.approved_at ? ` · Approved ${formatDate(item.approved_at)}` : ""}`;
+    $("humanNotes").value = item.human_notes || "";
+    $("reviewedBy").value = item.reviewed_by || "";
+    $("evaluationStatus").value = item.evaluation_status || "pending";
+    $("evaluationStatus").disabled = activeEvaluationApproved;
+    $("humanNotes").disabled = activeEvaluationApproved;
+    $("reviewedBy").disabled = activeEvaluationApproved;
+    $("saveEvaluationBtn").disabled = activeEvaluationApproved;
+    $("saveEvaluationBtn").textContent = activeEvaluationApproved ? "Approved · Locked" : "Save assessment";
+    setAssessmentMessage(activeEvaluationApproved ? "This assessment is approved and read-only. Create a new assessment for reassessment." : "", "info");
+    for (const el of $("evaluationHistory").children) {
+      el.classList.toggle("selected", el.dataset.evaluationId === item.id);
+    }
+  }
+
+  async function reloadEvaluationHistory() {
+    const data = await api("/api/admin/evaluations?candidateId=" + encodeURIComponent(activeCandidateId));
+    renderEvaluationHistory(data.evaluations || []);
+    await loadCandidates();
+  }
+
+  $("newEvaluationBtn").addEventListener("click", async () => {
+    if (!activeCandidateId) return;
+    const button = $("newEvaluationBtn");
+    button.disabled = true;
+    try {
+      const data = await api("/api/admin/evaluations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId: activeCandidateId })
+      });
+      activeEvaluationId = data.evaluationId;
+      await reloadEvaluationHistory();
+      setAssessmentMessage("New assessment created. Add HR notes and save.", "success");
+    } catch (error) {
+      setAssessmentMessage(error.message || "Could not create assessment.", "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("saveEvaluationBtn").addEventListener("click", async () => {
+    if (!activeEvaluationId || activeEvaluationApproved) return;
+    const button = $("saveEvaluationBtn");
+    button.disabled = true;
+    button.textContent = "Saving…";
+    try {
+      const data = await api("/api/admin/evaluations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          evaluationId: activeEvaluationId,
+          humanNotes: $("humanNotes").value,
+          reviewedBy: $("reviewedBy").value,
+          status: $("evaluationStatus").value
+        })
+      });
+      setAssessmentMessage(data.message || "Assessment saved.", "success");
+      await reloadEvaluationHistory();
+    } catch (error) {
+      setAssessmentMessage(error.message || "Could not save assessment.", "error");
+    } finally {
+      button.textContent = "Save assessment";
+      button.disabled = activeEvaluationApproved;
+    }
+  });
+
+  function closeProfile() {
+    $("profileModal").classList.add("hidden");
+    activeCandidateId = null;
+    activeEvaluationId = null;
+  }
+  $("closeProfileBtn").addEventListener("click", closeProfile);
+  $("profileModal").addEventListener("click", event => {
+    if (event.target === $("profileModal")) closeProfile();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !$("profileModal").classList.contains("hidden")) closeProfile();
+  });
+
+  function setCandidateType(type) {
+    candidateType = type;
+    page = 1;
+    $("jobSeekersTab").classList.toggle("active", type === "job_seeker");
+    $("careerAdvisoryTab").classList.toggle("active", type === "career_advisory");
+    $("jobSeekersTab").setAttribute("aria-selected", String(type === "job_seeker"));
+    $("careerAdvisoryTab").setAttribute("aria-selected", String(type === "career_advisory"));
+    $("search").value = "";
+    $("status").value = "";
+    loadCandidates();
+  }
+  $("jobSeekersTab").addEventListener("click", () => setCandidateType("job_seeker"));
+  $("careerAdvisoryTab").addEventListener("click", () => setCandidateType("career_advisory"));
 
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
@@ -1001,6 +1327,10 @@
       $("rows").replaceChildren();
       $("search").value = "";
       $("status").value = "";
+      closeProfile();
+      candidateType = "job_seeker";
+      $("jobSeekersTab").classList.add("active");
+      $("careerAdvisoryTab").classList.remove("active");
       total = 0;
       page = 1;
       displayLogin();
