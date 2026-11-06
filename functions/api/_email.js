@@ -1,3 +1,4 @@
+
 function escapeHtml(value) {
   return String(value || "").replace(/[&<>"']/g, (character) => {
     const entities = {
@@ -11,6 +12,9 @@ function escapeHtml(value) {
     return entities[character];
   });
 }
+
+// Use the URL that successfully displays your official logo.
+const logoUrl = "https://www.whizverseconsulting.com/logo.png";
 
 function buildEmail(candidate) {
   const name = escapeHtml(candidate.full_name);
@@ -36,46 +40,108 @@ function buildEmail(candidate) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${subject}</title>
       </head>
-      <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#263238;">
-        <div style="max-width:620px;margin:30px auto;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;">
-          <div style="background:#14213d;padding:28px 32px;color:#ffffff;">
-            <h1 style="margin:0;font-size:23px;">Whizverse Consulting</h1>
-            <p style="margin:8px 0 0;color:#dbeafe;font-size:13px;">
-              UK &amp; Europe Career Advisory
-            </p>
-          </div>
 
-          <div style="padding:32px;">
-            <p style="font-size:16px;">Dear ${name},</p>
+      <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#243447;">
 
-            <h2 style="font-size:21px;color:#14213d;margin-top:24px;">
-              ${heading}
-            </h2>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+          style="background:#f1f5f9;padding:28px 12px;">
+          <tr>
+            <td align="center">
 
-            <p style="font-size:15px;line-height:1.7;color:#4b5563;">
-              ${message}
-            </p>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                style="max-width:620px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
 
-            <p style="font-size:15px;line-height:1.7;color:#4b5563;">
-              Thank you for considering Whizverse Consulting.
-            </p>
+                <!-- Branded header -->
+                <tr>
+                  <td align="center" style="background:#102a43;padding:28px 24px 24px;">
 
-            <p style="font-size:15px;line-height:1.7;margin-top:28px;">
-              Regards,<br>
-              <strong>Whizverse Consulting Team</strong>
-            </p>
-          </div>
+                    <table role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td align="center"
+                          style="background:#ffffff;padding:10px 18px;border-radius:8px;">
+                          <img
+                            src="${logoUrl}"
+                            alt="Whizverse Consulting"
+                            width="180"
+                            style="display:block;width:180px;max-width:100%;height:auto;border:0;"
+                          >
+                        </td>
+                      </tr>
+                    </table>
 
-          <div style="background:#f8fafc;padding:18px 32px;border-top:1px solid #e5e7eb;">
-            <p style="font-size:12px;line-height:1.6;color:#6b7280;margin:0;">
-              This is an automated confirmation of your submission.
-              Please do not reply directly to this email.
-            </p>
-            <p style="font-size:12px;color:#6b7280;margin:8px 0 0;">
-              Whizverse Consulting
-            </p>
-          </div>
-        </div>
+                    <p style="margin:15px 0 0;color:#dbeafe;font-size:13px;letter-spacing:0.5px;">
+                      UK &amp; EUROPE CAREER ADVISORY
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Teal brand accent -->
+                <tr>
+                  <td style="height:4px;background:#0f8b8d;font-size:0;line-height:0;">
+                    &nbsp;
+                  </td>
+                </tr>
+
+                <!-- Email content -->
+                <tr>
+                  <td style="padding:34px 32px;">
+
+                    <p style="font-size:15px;color:#334155;margin:0 0 22px;">
+                      Dear ${name},
+                    </p>
+
+                    <h2 style="font-size:22px;line-height:1.4;color:#102a43;margin:0 0 18px;">
+                      ${heading}
+                    </h2>
+
+                    <p style="font-size:15px;line-height:1.8;color:#475569;margin:0 0 18px;">
+                      ${message}
+                    </p>
+
+                    <p style="font-size:15px;line-height:1.8;color:#475569;margin:0 0 26px;">
+                      Thank you for considering Whizverse Consulting. We appreciate the opportunity to support your career journey.
+                    </p>
+
+                    <p style="font-size:15px;line-height:1.7;color:#334155;margin:0;">
+                      Regards,<br>
+                      <strong style="color:#102a43;">Whizverse Consulting Team</strong>
+                    </p>
+
+                  </td>
+                </tr>
+
+                <!-- Branded footer -->
+                <tr>
+                  <td style="background:#f8fafc;padding:22px 32px;border-top:1px solid #e2e8f0;">
+
+                    <p style="font-size:12px;line-height:1.7;color:#64748b;margin:0 0 10px;">
+                      This is an automated confirmation of your submission.
+                      Please do not reply directly to this email.
+                    </p>
+
+                    <p style="font-size:12px;line-height:1.7;color:#64748b;margin:0;">
+                      <strong style="color:#102a43;">Whizverse Consulting</strong><br>
+                      UK &amp; Europe Career Advisory<br>
+                      <a href="https://www.whizverseconsulting.com"
+                        style="color:#0f8b8d;text-decoration:none;">
+                        www.whizverseconsulting.com
+                      </a>
+                      &nbsp;|&nbsp;
+                      <a href="mailto:contact@whizverseconsulting.com"
+                        style="color:#0f8b8d;text-decoration:none;">
+                        Contact Us
+                      </a>
+                    </p>
+
+                  </td>
+                </tr>
+
+              </table>
+
+            </td>
+          </tr>
+        </table>
+
       </body>
     </html>
   `;
@@ -87,10 +153,13 @@ function buildEmail(candidate) {
     "",
     message,
     "",
-    "Thank you for considering Whizverse Consulting.",
+    "Thank you for considering Whizverse Consulting. We appreciate the opportunity to support your career journey.",
     "",
     "Regards,",
     "Whizverse Consulting Team",
+    "",
+    "www.whizverseconsulting.com",
+    "contact@whizverseconsulting.com",
   ].join("\n");
 
   return { subject, html, text };
@@ -117,8 +186,6 @@ export async function sendRegistrationEmail(env, candidate) {
 
     notificationId = crypto.randomUUID();
 
-    // Reserve one notification per candidate and email type.
-    // The unique constraint prevents accidental duplicate sends.
     const reservation = await env.DB.prepare(`
       INSERT OR IGNORE INTO email_notifications (
         id,
@@ -135,7 +202,6 @@ export async function sendRegistrationEmail(env, candidate) {
     ).run();
 
     if (!reservation.meta || reservation.meta.changes !== 1) {
-      // A notification already exists. Do not send another email.
       return;
     }
 
@@ -198,7 +264,6 @@ export async function sendRegistrationEmail(env, candidate) {
       error: String(error?.message || error).slice(0, 500),
     });
 
-    // Email logging failures must never affect candidate registration.
     if (notificationId) {
       try {
         await env.DB.prepare(`
@@ -206,8 +271,7 @@ export async function sendRegistrationEmail(env, candidate) {
           SET
             status = 'failed',
             error_message = ?,
-            updated_at = datetime('now'
-            )
+            updated_at = datetime('now')
           WHERE id = ?
         `).bind(
           String(error?.message || error).slice(0, 500),
