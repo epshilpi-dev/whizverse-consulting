@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=index.html#services">
-  <link rel="canonical" href="index.html#services">
   <title>Services | Whizverse Consulting</title>
   <script>
-    window.location.replace("index.html#services");
+    const destination = window.location.hash === "#industries"
+      ? "index.html#industries"
+      : "index.html#services";
+
+    window.location.replace(destination);
   </script>
 </head>
 <body>
-  <p>Our services have moved. <a href="index.html#services">View Whizverse Consulting services</a>.</p>
+  <p>Redirecting to Whizverse Consulting. 
+    <a href="index.html#services">Continue to Services</a>.
+  </p>
 </body>
 </html>
