@@ -22,7 +22,6 @@ function base64Encode(buffer) {
   const bytes = new Uint8Array(buffer);
   let binary = "";
 
-  // Process in chunks to avoid exceeding the argument limit.
   for (let i = 0; i < bytes.length; i += 0x8000) {
     binary += String.fromCharCode(
       ...bytes.subarray(i, i + 0x8000)
@@ -175,7 +174,6 @@ The score_breakdown must contain all six rubric categories.
 }
 
 export async function onRequestPost({ request, env }) {
-  // Authentication
   if (!(await isAdmin(request, env))) {
     return json({
       success: false,
@@ -183,7 +181,6 @@ export async function onRequestPost({ request, env }) {
     }, 401);
   }
 
-  // Require same-origin browser requests.
   const origin = request.headers.get("Origin");
   if (!origin || origin !== new URL(request.url).origin) {
     return json({
@@ -223,14 +220,11 @@ export async function onRequestPost({ request, env }) {
     }, 400);
   }
 
- const candidateId = body.candidateId.trim();
-
-let stage = "database_lookup";
-const diagnosticId = crypto.randomUUID();
-
+  const candidateId = body.candidateId.trim();
+  const diagnosticId = crypto.randomUUID();
+  let stage = "database_lookup";
 
   try {
-    // Retrieve only the fields needed for the assessment.
     const candidate = await env.DB.prepare(`
       SELECT
         id,
@@ -261,7 +255,8 @@ const diagnosticId = crypto.randomUUID();
       }, 404);
     }
 
-    // Enforce consent on the server for every request.
+    stage = "consent_verification";
+
     if (
       candidate.candidate_type !== "career_advisory" ||
       Number(candidate.consent_ai_processing) !== 1 ||
@@ -272,6 +267,8 @@ const diagnosticId = crypto.randomUUID();
         message: "AI evaluation is not permitted for this candidate. Verify Profile Review eligibility and recorded AI consent."
       }, 403);
     }
+
+    stage = "resume_metadata_validation";
 
     if (!candidate.resume_key) {
       return json({
@@ -289,7 +286,7 @@ const diagnosticId = crypto.randomUUID();
       }, 415);
     }
 
-    // Resolve the R2 object key from D1, never from the request.
+    stage = "r2_resume_retrieval";
     const resumeObject = await env.RESUMES.get(
       candidate.resume_key
     );
@@ -311,6 +308,7 @@ const diagnosticId = crypto.randomUUID();
       }, 413);
     }
 
+    stage = "resume_download";
     const resumeBuffer = await resumeObject.arrayBuffer();
 
     if (resumeBuffer.byteLength === 0) {
@@ -327,9 +325,11 @@ const diagnosticId = crypto.randomUUID();
       }, 413);
     }
 
+    stage = "resume_conversion";
     const resumeBase64 = base64Encode(resumeBuffer);
     const model = env.OPENAI_MODEL || "gpt-4.1";
 
+    stage = "openai_api_request";
     const openAIResponse = await fetch(
       "https://api.openai.com/v1/responses",
       {
@@ -392,26 +392,34 @@ const diagnosticId = crypto.randomUUID();
     if (!openAIResponse.ok) {
       const errorBody = await openAIResponse.text();
 
-      // Log diagnostic information without logging candidate data.
       console.error("OpenAI evaluation request failed.", {
+        diagnosticId,
+        stage,
         status: openAIResponse.status,
         response: errorBody.slice(0, 1000)
       });
 
       return json({
         success: false,
+        diagnosticId,
+        stage,
         message: openAIResponse.status === 429
           ? "OpenAI rate limit or quota reached. Check API usage and billing."
           : "The AI evaluation service could not complete the request."
       }, openAIResponse.status === 429 ? 429 : 502);
     }
 
+    stage = "openai_response_parsing";
     const responseData = await openAIResponse.json();
     const outputText = extractResponseText(responseData);
+
+    stage = "report_validation";
 
     if (!outputText) {
       return json({
         success: false,
+        diagnosticId,
+        stage,
         message: "The AI service returned no evaluation text."
       }, 502);
     }
@@ -423,6 +431,8 @@ const diagnosticId = crypto.randomUUID();
     } catch {
       return json({
         success: false,
+        diagnosticId,
+        stage,
         message: "The AI service returned an invalid report. No assessment was saved."
       }, 502);
     }
@@ -438,6 +448,8 @@ const diagnosticId = crypto.randomUUID();
     ) {
       return json({
         success: false,
+        diagnosticId,
+        stage,
         message: "The AI report did not pass validation. No assessment was saved."
       }, 502);
     }
@@ -464,11 +476,14 @@ const diagnosticId = crypto.randomUUID();
     ) {
       return json({
         success: false,
+        diagnosticId,
+        stage,
         message: "The AI report contains inconsistent scores. No assessment was saved."
       }, 502);
     }
 
-    // Each run creates a new assessment. Earlier assessments remain intact.
+    stage = "d1_assessment_save";
+
     const evaluationId = crypto.randomUUID();
     const generatedAt = new Date().toISOString();
 
@@ -516,11 +531,21 @@ const diagnosticId = crypto.randomUUID();
 
   } catch (error) {
     console.error("AI career evaluation failed.", {
-      message: error?.message || "Unknown error."
+      diagnosticId,
+      stage,
+      errorName: error?.name || "UnknownError",
+      errorMessage: String(
+        error?.message || "Unknown error."
+      ).slice(0, 500),
+      errorStack: String(
+        error?.stack || ""
+      ).slice(0, 1500)
     });
 
     return json({
       success: false,
+      diagnosticId,
+      stage,
       message: "The evaluation could not be completed. No new assessment was confirmed as saved."
     }, 500);
   }
