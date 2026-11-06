@@ -8,18 +8,18 @@
   <title>Job Seekers & Career Services | Whizverse Consulting</title>
   <style>
     :root {
-      --navy: #142b4a;
-      --blue: #2463eb;
-      --teal: #0f9f91;
+      --navy: #102A43;
+      --blue: #0F8B8D;
+      --teal: #0F8B8D;
       --ink: #243247;
       --muted: #65748b;
       --line: #e3e9f1;
-      --bg: #f5f8fc;
+      --bg: #F1F5F9;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
       background: var(--bg);
       line-height: 1.6;
@@ -35,13 +35,16 @@
       gap: 16px;
       flex-wrap: wrap;
     }
-    .brand { color: var(--navy); font-size: 20px; font-weight: 800; text-decoration: none; }
-    .navlinks { display: flex; gap: 20px; flex-wrap: wrap; }
-    .navlinks a { text-decoration: none; color: var(--ink); font-weight: 600; }
+    .brand { display: flex; align-items: center; text-decoration: none; }
+    .brand img { display: block; width: 205px; max-width: 42vw; height: auto; object-fit: contain; }
+    .navlinks { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .navlinks a { text-decoration: none; color: var(--navy); font-size: 14px; font-weight: 700; }
+    .navlinks a:hover { color: var(--teal); }
+    .navlinks .nav-cta { background: var(--teal); color: white; padding: 9px 13px; border-radius: 8px; }
     .hero {
       padding: 64px 6%;
       color: white;
-      background: linear-gradient(125deg, #142b4a, #244c79);
+      background: linear-gradient(125deg, #102A43, #183B56 68%, #0F6F72);
     }
     .hero-inner { max-width: 1120px; margin: auto; }
     .eyebrow { color: #78e0d4; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 800; }
@@ -49,7 +52,7 @@
     .hero p { max-width: 700px; color: #e0e9f5; font-size: 18px; }
     .button {
       display: inline-block; padding: 12px 20px; border-radius: 8px;
-      background: var(--blue); color: white; text-decoration: none;
+      background: var(--teal); color: white; text-decoration: none;
       border: 0; cursor: pointer; font-size: 15px; font-weight: 700;
     }
     .button-light { background: white; color: var(--navy); margin-left: 8px; }
@@ -77,14 +80,21 @@
       width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1;
       border-radius: 7px; font: inherit; background: white;
     }
-    input:focus, select:focus, textarea:focus { outline: 2px solid #b6ccff; border-color: var(--blue); }
+    input:focus, select:focus, textarea:focus { outline: 2px solid rgba(15,139,141,.22); border-color: var(--teal); }
     .consent { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; font-weight: 400; }
     .consent input { width: auto; margin-top: 6px; }
     .hint, .notice { font-size: 13px; color: var(--muted); }
     #formStatus { margin-top: 16px; font-weight: 700; }
     .services { margin-top: 48px; }
     footer { margin-top: 60px; background: #10213a; color: #dce6f2; padding: 28px 6%; text-align: center; }
-    footer a { color: #a9c6ff; }
+    footer a { color: #bfe9e5; }
+    footer .footer-brand { width: 150px; height: auto; vertical-align: middle; margin-bottom: 10px; }
+    @media (max-width: 760px) {
+      .nav { padding: 14px 5%; }
+      .navlinks { gap: 10px 14px; }
+      .navlinks a { font-size: 12px; }
+      .brand img { width: 175px; }
+    }
     @media (max-width: 760px) {
       .register-layout { grid-template-columns: 1fr; }
       form { grid-template-columns: 1fr; }
@@ -95,12 +105,14 @@
 </head>
 <body>
   <header class="nav">
-    <a class="brand" href="index.html">WHIZVERSE</a>
+    <a class="brand" href="index.html" aria-label="Whizverse Consulting home"><img src="/logo.png" alt="Whizverse Consulting" width="205" height="62"></a>
     <nav class="navlinks" aria-label="Main navigation">
       <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="index.html#services">Services</a>
       <a href="jobs.html">IT Jobs</a>
-      <a href="#career-services">Career Services</a>
-      <a href="#register">Register</a>
+      <a href="profile-review">Profile Review</a>
+      <a class="nav-cta" href="contact.html">Contact</a>
     </nav>
   </header>
 
@@ -199,9 +211,9 @@
             <div class="field full">
               <label class="consent" for="consentPrivacy">
                 <input id="consentPrivacy" name="consentPrivacy" type="checkbox" required>
-                <span>I consent to Whizverse Consulting processing my submitted details and resume for candidate registration and relevant career opportunities. I have read the <a href="privacy.html">Privacy Policy</a>.</span>
+                <span>I consent to Whizverse Consulting processing my submitted details and resume for candidate registration and relevant career opportunities. A formal Privacy Notice covering data use, retention, access and deletion will be published before this form is opened for public submissions.</span>
               </label>
-              <span class="hint">Please publish a Privacy Policy explaining retention, access, deletion requests and contact details before accepting real candidate submissions.</span>
+              <span class="hint">Do not open this form for public submissions until the Privacy Notice is published and linked here.</span>
             </div>
             <div class="field full">
               <button class="button" id="submitButton" type="submit">Submit Candidate Profile
@@ -242,8 +254,9 @@
   </main>
 
   <footer>
+    <img class="footer-brand" src="/logo.png" alt="Whizverse Consulting">
     <p>© <span id="year"></span> Whizverse Consulting. All rights reserved.</p>
-    <p><a href="index.html">Home</a> · <a href="jobs.html">IT Jobs</a> · <a href="privacy.html">Privacy Policy</a></p>
+    <p><a href="index.html">Home</a> · <a href="about.html">About</a> · <a href="jobs.html">IT Jobs</a> · <a href="profile-review">Profile Review</a> · <a href="contact.html">Contact</a></p>
   </footer>
 
   <script>
