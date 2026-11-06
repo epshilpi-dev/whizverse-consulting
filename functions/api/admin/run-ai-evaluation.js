@@ -223,7 +223,11 @@ export async function onRequestPost({ request, env }) {
     }, 400);
   }
 
-  const candidateId = body.candidateId.trim();
+ const candidateId = body.candidateId.trim();
+
+let stage = "database_lookup";
+const diagnosticId = crypto.randomUUID();
+
 
   try {
     // Retrieve only the fields needed for the assessment.
