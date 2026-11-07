@@ -529,18 +529,36 @@ export async function onRequestPost({ request, env }) {
       report: storedOutput
     }, 201);
 
-  } catch (error) {
-    console.error("AI career evaluation failed.", {
-      diagnosticId,
-      stage,
-      errorName: error?.name || "UnknownError",
-      errorMessage: String(
-        error?.message || "Unknown error."
-      ).slice(0, 500),
-      errorStack: String(
-        error?.stack || ""
-      ).slice(0, 1500)
-    });
+  } 
+} catch (error) {
+  const errorName = error?.name || "UnknownError";
+
+  const errorMessage = String(
+    error?.message || "No exception message available."
+  ).slice(0, 1000);
+
+  const errorStack = String(
+    error?.stack || ""
+  ).slice(0, 2000);
+
+  console.error("AI career evaluation failed.", {
+    diagnosticId,
+    stage,
+    errorName,
+    errorMessage,
+    errorStack
+  });
+
+  return json({
+    success: false,
+    diagnosticId,
+    stage,
+    errorName,
+    errorMessage,
+    message: "AI evaluation failed. See diagnostic details."
+  }, 500);
+}
+
 
     return json({
       success: false,
