@@ -152,6 +152,76 @@
       .checkout-card,.summary-card { padding: 21px; }
       .footer-inner { align-items: flex-start; flex-direction: column; }
     }
+  
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root {
+      --navy:#252D3B; --navy-deep:#202938; --teal:#5D59B5; --teal-dark:#5551AA;
+      --teal-soft:#ECEBFA; --ink:#30394A; --muted:#657084; --bg:#F8F8FB;
+      --white:#FFFFFF; --border:#E7E7EF; --shadow:0 10px 28px rgba(35,42,58,.08);
+      --radius:23px;
+    }
+    body{background:var(--bg);color:var(--ink)}
+    h1,h2,h3,h4{font-family:'DM Serif Display',Georgia,serif;color:var(--navy);font-weight:400}
+    .site-header{background:rgba(249,249,252,.97);border-bottom:1px solid #E9E9F0}
+    .nav{min-height:88px;justify-content:flex-start;gap:34px}
+    .brand{flex:0 0 auto;gap:15px;min-width:250px}
+    .brand img{width:auto;height:54px;max-width:145px;object-fit:contain}
+    .brand-name{display:inline;font:700 19px 'Manrope',sans-serif;color:#252D3B;white-space:nowrap}
+    .brand-fallback{display:none}
+    .nav-links{margin-left:auto;gap:27px}
+    .nav-links a{color:#343D4E;font-size:14px}
+    .nav-cart{border:1px solid #DAD9EF;color:#5551AA;background:#fff;border-radius:999px;padding:10px 18px}
+    .cart-count{background:#5D59B5}
+    .hero{background:linear-gradient(120deg,#292F43 0%,#464477 58%,#625DB8 100%);padding:72px 0 68px}
+    .hero h1{font-family:'DM Serif Display',Georgia,serif;font-weight:400;letter-spacing:-.5px}
+    .hero p{color:#E7E7F2}
+    .btn{border-radius:999px}
+    .btn-primary{background:#6863C3;box-shadow:0 8px 22px rgba(20,18,70,.2)}
+    .btn-primary:hover{background:#7772D0}
+    .btn-outline{border-color:rgba(255,255,255,.58)}
+    .trust-strip{background:#fff}
+    .trust-icon,.section-label{color:#5D59B5}
+    .section{padding:72px 0}
+    .section-heading h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(31px,3.5vw,43px);letter-spacing:0}
+    .service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+    .service-card{padding:30px 32px 27px;border:1px solid #ECECF1;border-radius:24px;box-shadow:0 2px 5px rgba(30,36,50,.08)}
+    .service-card:hover{transform:translateY(-3px);border-color:#D7D5F0;box-shadow:0 12px 30px rgba(35,42,58,.10)}
+    .service-card-heading{display:flex;align-items:center;gap:18px;margin-bottom:20px;min-height:62px}
+    .service-icon{width:60px;height:60px;flex:0 0 60px;display:grid;place-items:center;background:linear-gradient(135deg,#7772CF,#5551AA);color:white;border-radius:14px;font-size:25px;margin:0}
+    .service-card h3{font-size:clamp(20px,2vw,25px);margin:0;line-height:1.25}
+    .service-card ul{font-size:15px;color:#566176;margin:0 0 18px;padding-left:21px}
+    .service-card li{margin-bottom:9px;padding-left:2px}
+    .service-card li::marker{color:#625DB8}
+    .service-meta{border-top:1px solid #ECECF2;padding-top:12px}
+    .meta-row{font-size:14px}
+    .meta-row strong{color:#30394A}
+    .card-actions{gap:12px;margin-top:18px}
+    .add-btn,.buy-btn{border-radius:15px;min-height:52px;font-size:14px}
+    .add-btn{border:1px solid #D4D2EE;color:#5D59B5;background:#fff}
+    .add-btn:hover{background:#F4F3FC}
+    .buy-btn{background:#5D59B5;border-color:#5D59B5}
+    .buy-btn:hover{background:#4F4BA5}
+    .process-section{background:#fff}
+    .step-number{background:#5D59B5}
+    .process-step{border-radius:18px;background:#FBFBFE}
+    .checkout-section{background:#F8F8FB}
+    .checkout-card,.summary-card{border-radius:22px}
+    .footer{background:#242B3A}
+    .footer-brand img{display:block;width:150px;height:48px;max-width:100%;object-fit:contain;object-position:center;background:#fff;padding:5px 10px;border-radius:7px;filter:none}
+    .footer-brand span{color:#fff}
+    @media(max-width:760px){
+      .nav{min-height:76px;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+      .brand{min-width:0;gap:9px}
+      .brand img{height:42px;max-width:105px}
+      .brand-name{font-size:15px}
+      .nav-links{width:100%;margin-left:0;justify-content:space-between;gap:10px}
+      .nav-links a{font-size:12px}
+      .service-grid{grid-template-columns:1fr}
+      .service-card{padding:23px}
+      .service-card-heading{gap:14px}
+      .service-icon{width:52px;height:52px;flex-basis:52px}
+    }
+
   </style>
 </head>
 <body>
@@ -159,7 +229,7 @@
     <div class="container nav">
       <a class="brand" href="/" aria-label="Whizverse Consulting home">
         <img src="/logo.png" alt="Whizverse Consulting" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
-        <span class="brand-fallback">Whizverse Consulting</span>
+        <span class="brand-name">Whizverse Consulting</span><span class="brand-fallback">Whizverse Consulting</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="/#about">About</a>
@@ -213,8 +283,7 @@
 
         <div class="service-grid">
           <article class="service-card">
-            <div class="service-icon">📄</div>
-            <h3>Resume Rewriting</h3>
+            <div class="service-card-heading"><div class="service-icon">📄</div><h3>Resume Rewriting</h3></div>
             <ul>
               <li>ATS-friendly structure and keyword alignment</li>
               <li>Achievement-focused experience bullets</li>
@@ -226,8 +295,7 @@
           </article>
 
           <article class="service-card">
-            <div class="service-icon">✉️</div>
-            <h3>Cover Letter</h3>
+            <div class="service-card-heading"><div class="service-icon">✉️</div><h3>Cover Letter</h3></div>
             <ul>
               <li>Professional cover letter tailored to your profile</li>
               <li>Relevant achievements and strengths highlighted</li>
@@ -239,8 +307,7 @@
           </article>
 
           <article class="service-card">
-            <div class="service-icon">🔗</div>
-            <h3>LinkedIn Optimisation</h3>
+            <div class="service-card-heading"><div class="service-icon">🔗</div><h3>LinkedIn Optimisation</h3></div>
             <ul>
               <li>Keyword-informed headline and About section</li>
               <li>Experience descriptions aligned to target roles</li>
@@ -252,8 +319,7 @@
           </article>
 
           <article class="service-card">
-            <div class="service-icon">🎯</div>
-            <h3>Interview Preparation</h3>
+            <div class="service-card-heading"><div class="service-icon">🎯</div><h3>Interview Preparation</h3></div>
             <ul>
               <li>Review of your profile and target role</li>
               <li>10 likely role-relevant interview questions</li>
@@ -265,8 +331,7 @@
           </article>
 
           <article class="service-card">
-            <div class="service-icon">💼</div>
-            <h3>Ready Job Pack</h3>
+            <div class="service-card-heading"><div class="service-icon">💼</div><h3>Ready Job Pack</h3></div>
             <ul>
               <li>Curated job opportunities based on your profile</li>
               <li>Consideration of your preferred roles and locations</li>
