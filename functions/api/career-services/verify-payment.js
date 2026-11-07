@@ -1,3 +1,4 @@
+import { sendCareerOrderEmails } from "../../_lib/career-service-email.js";
 
 function response(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -44,6 +45,7 @@ function constantTimeEqual(a, b) {
 export async function onRequestPost({ request, env }) {
   try {
     const origin = request.headers.get("Origin");
+
     if (!origin || origin !== new URL(request.url).origin) {
       return response({ error: "Request not allowed." }, 403);
     }
@@ -54,6 +56,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     const input = await request.json();
+
     const orderId = String(input.razorpay_order_id || "");
     const paymentId = String(input.razorpay_payment_id || "");
     const signature = String(input.razorpay_signature || "");
@@ -64,25 +67,22 @@ export async function onRequestPost({ request, env }) {
       return response({ error: "Invalid payment details." }, 400);
     }
 
-    const result = await env.DB.prepare(`
-      SELECT id, amount_paise, currency, status,
-             razorpay_order_id, razorpay_payment_id
+    const order = await env.DB.prepare(`
+      SELECT id, candidate_id, candidate_name, email, phone,
+             items_json, amount_paise, currency, status,
+             razorpay_order_id, razorpay_payment_id, paid_at
       FROM career_service_orders
       WHERE razorpay_order_id = ?
       LIMIT 1
     `).bind(orderId).first();
 
-    if (!result) {
+    if (!order) {
       return response({ error: "Order not found." }, 404);
-    }
-
-    if (result.status === "paid") {
-      return response({ success: true, status: "paid" });
     }
 
     const expectedSignature = await hmacHex(
       env.RAZORPAY_KEY_SECRET,
-      result.razorpay_order_id + "|" + paymentId
+      order.razorpay_order_id + "|" + paymentId
     );
 
     if (!constantTimeEqual(
@@ -103,7 +103,7 @@ export async function onRequestPost({ request, env }) {
       }
     );
 
-    const payment = await paymentResponse.json();
+    const payment = await paymentResponse.json().catch(() => ({}));
 
     if (!paymentResponse.ok) {
       return response({
@@ -111,9 +111,9 @@ export async function onRequestPost({ request, env }) {
       }, 502);
     }
 
-    if (payment.order_id !== result.razorpay_order_id ||
-        payment.amount !== result.amount_paise ||
-        payment.currency !== result.currency) {
+    if (payment.order_id !== order.razorpay_order_id ||
+        payment.amount !== order.amount_paise ||
+        payment.currency !== order.currency) {
       return response({
         error: "Payment does not match the saved order."
       }, 400);
@@ -127,29 +127,56 @@ export async function onRequestPost({ request, env }) {
       }, 202);
     }
 
+    if (order.status === "paid" &&
+        order.razorpay_payment_id &&
+        order.razorpay_payment_id !== paymentId) {
+      return response({
+        error: "This order is already associated with another payment."
+      }, 409);
+    }
+
     await env.DB.prepare(`
       UPDATE career_service_orders
       SET status = 'paid',
           razorpay_payment_id = ?,
-          paid_at = datetime('now')
+          paid_at = COALESCE(paid_at, datetime('now'))
       WHERE id = ?
-        AND status = 'created'
-    `).bind(paymentId, result.id).run();
+        AND (
+          status = 'created'
+          OR (
+            status = 'paid'
+            AND (
+              razorpay_payment_id = ?
+              OR razorpay_payment_id IS NULL
+            )
+          )
+        )
+    `).bind(paymentId, order.id, paymentId).run();
 
-    const updated = await env.DB.prepare(`
-      SELECT status
+    const updatedOrder = await env.DB.prepare(`
+      SELECT id, candidate_id, candidate_name, email, phone,
+             items_json, amount_paise, currency, status,
+             razorpay_order_id, razorpay_payment_id, paid_at
       FROM career_service_orders
       WHERE id = ?
       LIMIT 1
-    `).bind(result.id).first();
+    `).bind(order.id).first();
 
-    if (!updated || updated.status !== "paid") {
+    if (!updatedOrder || updatedOrder.status !== "paid" ||
+        updatedOrder.razorpay_payment_id !== paymentId) {
       return response({
         error: "Payment received; order confirmation is pending."
       }, 202);
     }
 
-    return response({ success: true, status: "paid" });
+    await sendCareerOrderEmails(env, updatedOrder);
+
+    return response({
+      success: true,
+      status: "paid",
+      message: "Payment confirmed. Your order has been received."
+    });
+
   } catch (error) {
     console.error("Career payment verification error", {
       name: error?.name || "Error"
