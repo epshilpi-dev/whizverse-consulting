@@ -118,7 +118,7 @@ export async function onRequestPost({ request, env }) {
             paid_at = COALESCE(paid_at, datetime('now'))
         WHERE id = ?
           AND (
-            status = 'created'
+            status IN ('created','failed')
             OR (
               status = 'paid'
               AND (
