@@ -1,3 +1,4 @@
+import { sendCareerOrderEmails } from "../../_lib/career-service-email.js";
 
 async function hmacHex(secret, message) {
   const key = await crypto.subtle.importKey(
@@ -34,8 +35,9 @@ function response(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store"
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff"
     }
   });
 }
@@ -63,17 +65,50 @@ export async function onRequestPost({ request, env }) {
     }
 
     const event = JSON.parse(rawBody);
-    const payment =
-      event.payload?.payment?.entity;
 
-    if (!payment?.order_id) {
-      return response({ received: true });
-    }
+    // payment.captured is the primary successful-payment event.
+    // order.paid is also supported when it contains a payment entity.
+    const payment = event.payload?.payment?.entity;
 
     if (event.event === "payment.captured" ||
         event.event === "order.paid") {
-      if (payment.status !== "captured") {
+
+      if (!payment?.id || !payment?.order_id ||
+          payment.status !== "captured") {
+        // Acknowledge unrelated or incomplete event payloads.
+        // The payment verification endpoint remains another confirmation path.
         return response({ received: true });
+      }
+
+      const order = await env.DB.prepare(`
+        SELECT id, candidate_id, candidate_name, email, phone,
+               items_json, amount_paise, currency, status,
+               razorpay_order_id, razorpay_payment_id, paid_at
+        FROM career_service_orders
+        WHERE razorpay_order_id = ?
+        LIMIT 1
+      `).bind(payment.order_id).first();
+
+      if (!order) {
+        // Do not retry an event for an order not belonging to this checkout.
+        return response({ received: true });
+      }
+
+      if (payment.amount !== order.amount_paise ||
+          payment.currency !== order.currency) {
+        console.error("Career webhook payment mismatch.", {
+          orderId: order.id
+        });
+        return response({ error: "Payment does not match the saved order." }, 400);
+      }
+
+      if (order.status === "paid" &&
+          order.razorpay_payment_id &&
+          order.razorpay_payment_id !== payment.id) {
+        console.error("Career webhook payment ID conflict.", {
+          orderId: order.id
+        });
+        return response({ error: "Order is associated with another payment." }, 409);
       }
 
       await env.DB.prepare(`
@@ -81,17 +116,39 @@ export async function onRequestPost({ request, env }) {
         SET status = 'paid',
             razorpay_payment_id = ?,
             paid_at = COALESCE(paid_at, datetime('now'))
-        WHERE razorpay_order_id = ?
-          AND amount_paise = ?
-          AND currency = ?
-          AND status IN ('created', 'paid')
-      `).bind(
-        payment.id,
-        payment.order_id,
-        payment.amount,
-        payment.currency
-      ).run();
+        WHERE id = ?
+          AND (
+            status = 'created'
+            OR (
+              status = 'paid'
+              AND (
+                razorpay_payment_id = ?
+                OR razorpay_payment_id IS NULL
+              )
+            )
+          )
+      `).bind(payment.id, order.id, payment.id).run();
+
+      const updatedOrder = await env.DB.prepare(`
+        SELECT id, candidate_id, candidate_name, email, phone,
+               items_json, amount_paise, currency, status,
+               razorpay_order_id, razorpay_payment_id, paid_at
+        FROM career_service_orders
+        WHERE id = ?
+        LIMIT 1
+      `).bind(order.id).first();
+
+      if (updatedOrder &&
+          updatedOrder.status === "paid" &&
+          updatedOrder.razorpay_payment_id === payment.id) {
+        await sendCareerOrderEmails(env, updatedOrder);
+      }
+
     } else if (event.event === "payment.failed") {
+      if (!payment?.order_id) {
+        return response({ received: true });
+      }
+
       await env.DB.prepare(`
         UPDATE career_service_orders
         SET status = 'failed'
@@ -101,6 +158,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     return response({ received: true });
+
   } catch (error) {
     console.error("Career payment webhook error", {
       name: error?.name || "Error"
@@ -109,4 +167,3 @@ export async function onRequestPost({ request, env }) {
     return response({ error: "Webhook processing failed." }, 500);
   }
 }
-
