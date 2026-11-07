@@ -504,6 +504,20 @@
     .profile-resume { display:inline-flex; margin-top:12px; }
     @media(max-width:760px) { .profile-modal { padding:8px; } .profile-head,.profile-content { padding:16px; } .detail-grid,.evaluation-layout { grid-template-columns:1fr; } }
 
+
+    .payment-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:0 0 22px; }
+    .payment-summary .stat-number { font-size:27px; }
+    .payment-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:18px 22px; }
+    .payment-toolbar .search-box { flex:1 1 260px; }
+    .payment-toolbar select { min-width:150px; }
+    .payment-status-paid { color:var(--green); background:var(--green-light); }
+    .payment-status-created { color:var(--amber); background:var(--amber-light); }
+    .payment-status-failed { color:var(--red); background:var(--red-light); }
+    .payment-status-other { color:#475467; background:#f2f4f7; }
+    .payment-id { font-size:11px; color:var(--muted); overflow-wrap:anywhere; max-width:190px; }
+    @media(max-width:1000px) { .payment-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:600px) { .payment-summary { gap:10px; } .payment-toolbar > * { width:100%; } .payment-toolbar .btn { flex:1; } }
+
     @media (max-width: 1000px) {
       .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       main { padding: 22px 18px; }
@@ -625,9 +639,34 @@
     <div class="view-tabs" role="tablist" aria-label="Candidate category">
       <button id="jobSeekersTab" class="tab-btn active" type="button" role="tab" aria-selected="true">Job Seekers</button>
       <button id="careerAdvisoryTab" class="tab-btn" type="button" role="tab" aria-selected="false">Career Advisory</button>
+      <button id="paymentsTab" class="tab-btn" type="button" role="tab" aria-selected="false">Payments</button>
     </div>
 
-    <section class="panel">
+    <section id="paymentsPanel" class="hidden" aria-label="Career service payments">
+      <section class="payment-summary" aria-label="Payment summary">
+        <article class="stat-card"><div class="stat-label">Total collections</div><strong id="paymentTotalCollected" class="stat-number">₹—</strong><div class="stat-foot">Captured payments only</div></article>
+        <article class="stat-card"><div class="stat-label">Successful payments</div><strong id="paymentSuccessful" class="stat-number">—</strong><div class="stat-foot">Paid orders</div></article>
+        <article class="stat-card"><div class="stat-label">Pending payments</div><strong id="paymentPending" class="stat-number">—</strong><div class="stat-foot">Orders awaiting payment</div></article>
+        <article class="stat-card"><div class="stat-label">Failed payments</div><strong id="paymentFailed" class="stat-number">—</strong><div class="stat-foot">Unsuccessful orders</div></article>
+      </section>
+      <section class="panel">
+        <div class="panel-header"><div><h3>Career Services Payment Register</h3><p>Review customer orders and Razorpay transaction references.</p></div><span id="paymentRecordCount" class="muted small">No records loaded</span></div>
+        <div class="payment-toolbar">
+          <div class="search-box"><span class="search-symbol" aria-hidden="true">⌕</span><input id="paymentSearch" maxlength="150" aria-label="Search payments" placeholder="Search customer, email, order ID or payment ID"></div>
+          <select id="paymentStatus" aria-label="Filter payments by status"><option value="">All statuses</option><option value="paid">Paid</option><option value="created">Pending</option><option value="failed">Failed</option></select>
+          <button id="paymentSearchBtn" class="btn btn-primary" type="button">Search</button>
+          <button id="paymentRefreshBtn" class="btn btn-secondary" type="button">↻ Refresh</button>
+          <button id="paymentExportBtn" class="btn btn-dark" type="button">↓ Export CSV</button>
+        </div>
+        <div id="paymentMessage" class="message" role="status" aria-live="polite"></div>
+        <div class="table-wrap"><table style="min-width:1100px"><thead><tr><th>Customer</th><th>Service</th><th>Amount</th><th>Status</th><th>Razorpay order ID</th><th>Payment ID</th><th>Order date</th><th>Paid date</th></tr></thead><tbody id="paymentRows"></tbody></table>
+          <div id="paymentEmptyState" class="empty-state hidden"><strong>No payment records found</strong>Try another search or status filter.</div>
+        </div>
+        <div class="pagination"><span id="paymentPageInfo" class="muted small">Showing records</span><div class="pagination-actions"><button id="paymentPrevBtn" class="btn btn-secondary" type="button">← Previous</button><span id="paymentPageLabel" class="page-label">Page 1</span><button id="paymentNextBtn" class="btn btn-secondary" type="button">Next →</button></div></div>
+      </section>
+    </section>
+
+    <section class="panel" id="candidateRegisterPanel">
       <div class="panel-header">
         <div>
           <h3 id="registerTitle">Job Seeker Register</h3>
@@ -755,6 +794,11 @@
   const pageSize = 25;
   let loadingCandidates = false;
   let candidateType = "job_seeker";
+  let activeAdminView = "job_seekers";
+  let paymentPage = 1;
+  const paymentPageSize = 25;
+  let paymentTotal = 0;
+  let currentPaymentRows = [];
   let activeCandidateId = null;
   let activeEvaluationId = null;
   let activeEvaluationApproved = false;
@@ -1028,6 +1072,126 @@
     }
   }
 
+  function setAdminView(view) {
+    activeAdminView = view;
+    const candidateView = view !== "payments";
+    document.querySelector(".stats-grid").classList.toggle("hidden", !candidateView);
+    document.querySelector(".view-tabs").classList.toggle("hidden", false);
+    $("candidateRegisterPanel").classList.toggle("hidden", !candidateView);
+    $("paymentsPanel").classList.toggle("hidden", candidateView);
+    $("jobSeekersTab").classList.toggle("active", view === "job_seekers");
+    $("careerAdvisoryTab").classList.toggle("active", view === "career_advisory");
+    $("paymentsTab").classList.toggle("active", view === "payments");
+    $("jobSeekersTab").setAttribute("aria-selected", String(view === "job_seekers"));
+    $("careerAdvisoryTab").setAttribute("aria-selected", String(view === "career_advisory"));
+    $("paymentsTab").setAttribute("aria-selected", String(view === "payments"));
+    if (view === "payments") {
+      if (!currentPaymentRows.length && paymentTotal === 0) paymentPage = 1;
+      loadPayments();
+    } else {
+      setCandidateType(view === "career_advisory" ? "career_advisory" : "job_seeker");
+    }
+  }
+
+  function paymentMessage(message, type = "info") {
+    const el = $("paymentMessage");
+    el.textContent = message;
+    el.className = "message";
+    if (message) el.classList.add(type === "error" ? "message-error" : type === "success" ? "message-success" : "message-info");
+  }
+
+  function formatINR(paise) {
+    return new Intl.NumberFormat("en-IN", { style:"currency", currency:"INR", maximumFractionDigits:2 }).format(Number(paise || 0) / 100);
+  }
+
+  function paymentStatusBadge(status) {
+    const normalized = String(status || "unknown").toLowerCase();
+    const badge = document.createElement("span");
+    badge.className = "status-badge " + (normalized === "paid" ? "payment-status-paid" : normalized === "created" ? "payment-status-created" : normalized === "failed" ? "payment-status-failed" : "payment-status-other");
+    badge.textContent = normalized === "created" ? "Pending" : normalized;
+    return badge;
+  }
+
+  function serviceNames(items) {
+    if (!Array.isArray(items) || !items.length) return "—";
+    return items.map(item => {
+      const name = item.name || item.service_name || item.service || item.id || "Career service";
+      const quantity = Number(item.quantity || 1);
+      return `${name}${quantity > 1 ? ` × ${quantity}` : ""}`;
+    }).join(", ");
+  }
+
+  async function loadPayments() {
+    setButtonBusy("paymentRefreshBtn", true, "Refreshing…", "↻ Refresh");
+    paymentMessage("Loading payment records…");
+    $("paymentRows").replaceChildren();
+    $("paymentEmptyState").classList.add("hidden");
+    try {
+      const params = new URLSearchParams({
+        q: $("paymentSearch").value.trim(),
+        status: $("paymentStatus").value,
+        limit: String(paymentPageSize),
+        offset: String((paymentPage - 1) * paymentPageSize)
+      });
+      const data = await api("/api/admin/payments?" + params.toString());
+      if (!data.success) throw new Error(data.message || "Unable to load payments.");
+      const summary = data.summary || {};
+      $("paymentTotalCollected").textContent = formatINR(summary.total_collected_paise);
+      $("paymentSuccessful").textContent = Number(summary.successful_payments || 0).toLocaleString();
+      $("paymentPending").textContent = Number(summary.pending_payments || 0).toLocaleString();
+      $("paymentFailed").textContent = Number(summary.failed_payments || 0).toLocaleString();
+      currentPaymentRows = Array.isArray(data.payments) ? data.payments : [];
+      paymentTotal = Number(data.pagination?.total || 0);
+      const pageCount = Math.max(1, Math.ceil(paymentTotal / paymentPageSize));
+      if (paymentPage > pageCount) { paymentPage = pageCount; return loadPayments(); }
+      for (const payment of currentPaymentRows) {
+        const tr = document.createElement("tr");
+        const customer = document.createElement("td");
+        const customerName = document.createElement("div"); customerName.className = "candidate-name"; customerName.textContent = payment.customer_name || "Unknown customer";
+        const customerContact = document.createElement("div"); customerContact.className = "candidate-sub"; customerContact.textContent = `${payment.email || ""}${payment.phone ? ` · ${payment.phone}` : ""}`;
+        customer.append(customerName, customerContact); tr.appendChild(customer);
+        const service = document.createElement("td"); service.textContent = serviceNames(payment.items); tr.appendChild(service);
+        tr.appendChild(makeCell(formatINR(payment.amount_paise)));
+        const status = document.createElement("td"); status.appendChild(paymentStatusBadge(payment.status)); tr.appendChild(status);
+        const order = document.createElement("td"); order.className = "payment-id"; order.textContent = payment.razorpay_order_id || payment.id || "—"; tr.appendChild(order);
+        const paymentId = document.createElement("td"); paymentId.className = "payment-id"; paymentId.textContent = payment.razorpay_payment_id || "—"; tr.appendChild(paymentId);
+        tr.appendChild(makeCell(formatDate(payment.created_at)));
+        tr.appendChild(makeCell(payment.paid_at ? formatDate(payment.paid_at) : "—"));
+        $("paymentRows").appendChild(tr);
+      }
+      $("paymentRecordCount").textContent = `${paymentTotal.toLocaleString()} order(s)`;
+      const start = paymentTotal ? (paymentPage - 1) * paymentPageSize + 1 : 0;
+      const end = Math.min(paymentPage * paymentPageSize, paymentTotal);
+      $("paymentPageInfo").textContent = `Showing ${start}–${end} of ${paymentTotal}`;
+      $("paymentPageLabel").textContent = `Page ${paymentPage} of ${pageCount}`;
+      $("paymentPrevBtn").disabled = paymentPage <= 1;
+      $("paymentNextBtn").disabled = paymentPage >= pageCount;
+      if (!currentPaymentRows.length) {
+        $("paymentEmptyState").classList.remove("hidden");
+        paymentMessage("No payment records match your search.", "info");
+      } else {
+        paymentMessage("Payment records loaded successfully. Collections include paid orders only.", "success");
+      }
+    } catch (error) {
+      paymentMessage(error.message || "Could not load payment records.", "error");
+      if (/unauthorized/i.test(error.message || "")) displayLogin();
+    } finally {
+      setButtonBusy("paymentRefreshBtn", false, "Refreshing…", "↻ Refresh");
+    }
+  }
+
+  function exportPaymentsCSV() {
+    if (!currentPaymentRows.length) { paymentMessage("There are no payment records on this page to export.", "info"); return; }
+    const headers = ["Customer","Email","Phone","Service","Amount INR","Currency","Status","Order ID","Razorpay Order ID","Razorpay Payment ID","Created At","Paid At"];
+    const rows = currentPaymentRows.map(p => [p.customer_name,p.email,p.phone,serviceNames(p.items),Number(p.amount_paise || 0)/100,p.currency,p.status,p.id,p.razorpay_order_id,p.razorpay_payment_id,p.created_at,p.paid_at]);
+    const csvCell = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows].map(row => row.map(csvCell).join(",")).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type:"text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a"); link.href = url; link.download = `whizverse-payments-page-${paymentPage}.csv`;
+    document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+  }
+
   function detailItem(label, value) {
     const wrap = document.createElement("div");
     wrap.className = "detail-item";
@@ -1243,6 +1407,12 @@
 
   function setCandidateType(type) {
     candidateType = type;
+    activeAdminView = type === "career_advisory" ? "career_advisory" : "job_seekers";
+    $("paymentsTab").classList.remove("active");
+    $("paymentsTab").setAttribute("aria-selected", "false");
+    $("paymentsPanel").classList.add("hidden");
+    $("candidateRegisterPanel").classList.remove("hidden");
+    document.querySelector(".stats-grid").classList.remove("hidden");
     page = 1;
     $("jobSeekersTab").classList.toggle("active", type === "job_seeker");
     $("careerAdvisoryTab").classList.toggle("active", type === "career_advisory");
@@ -1252,8 +1422,16 @@
     $("status").value = "";
     loadCandidates();
   }
-  $("jobSeekersTab").addEventListener("click", () => setCandidateType("job_seeker"));
-  $("careerAdvisoryTab").addEventListener("click", () => setCandidateType("career_advisory"));
+  $("jobSeekersTab").addEventListener("click", () => setAdminView("job_seekers"));
+  $("careerAdvisoryTab").addEventListener("click", () => setAdminView("career_advisory"));
+  $("paymentsTab").addEventListener("click", () => setAdminView("payments"));
+  $("paymentSearchBtn").addEventListener("click", () => { paymentPage = 1; loadPayments(); });
+  $("paymentSearch").addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); paymentPage = 1; loadPayments(); } });
+  $("paymentStatus").addEventListener("change", () => { paymentPage = 1; loadPayments(); });
+  $("paymentRefreshBtn").addEventListener("click", loadPayments);
+  $("paymentExportBtn").addEventListener("click", exportPaymentsCSV);
+  $("paymentPrevBtn").addEventListener("click", () => { if (paymentPage > 1) { paymentPage--; loadPayments(); } });
+  $("paymentNextBtn").addEventListener("click", () => { if (paymentPage * paymentPageSize < paymentTotal) { paymentPage++; loadPayments(); } });
 
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
@@ -1329,6 +1507,12 @@
       $("status").value = "";
       closeProfile();
       candidateType = "job_seeker";
+      activeAdminView = "job_seekers";
+      $("paymentsPanel").classList.add("hidden");
+      $("candidateRegisterPanel").classList.remove("hidden");
+      document.querySelector(".stats-grid").classList.remove("hidden");
+      $("paymentsTab").classList.remove("active");
+      $("paymentsTab").setAttribute("aria-selected", "false");
       $("jobSeekersTab").classList.add("active");
       $("careerAdvisoryTab").classList.remove("active");
       total = 0;
