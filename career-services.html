@@ -1,948 +1,545 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Explore career support services from Whizverse Consulting: resume rewriting, cover letters, LinkedIn optimisation, interview preparation and curated job packs.">
+  <meta name="description" content="Career services from Whizverse Consulting: resume rewriting, cover letters, LinkedIn optimisation, interview preparation and curated job packs.">
   <meta name="theme-color" content="#102A43">
   <title>Career Services | Whizverse Consulting</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --navy: #102A43;
-      --navy-light: #183B56;
+      --navy-deep: #0A1F33;
       --teal: #0F8B8D;
       --teal-dark: #087477;
-      --background: #F1F5F9;
+      --teal-soft: #E6F5F3;
+      --ink: #172B3A;
+      --muted: #627587;
+      --bg: #F1F5F9;
       --white: #FFFFFF;
-      --text: #263746;
-      --muted: #64748B;
-      --border: #DCE5ED;
-      --shadow: 0 12px 32px rgba(16, 42, 67, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: var(--background);
-      line-height: 1.6;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button, input, select, textarea {
-      font: inherit;
-    }
-
-    .container {
-      width: min(1160px, 92%);
-      margin: 0 auto;
-    }
-
-    /* Navigation */
-
-    .navbar {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-inner {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand img {
-      width: 185px;
-      max-height: 55px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 26px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .nav-links a:hover {
-      color: var(--teal);
-    }
-
-    .nav-cta {
-      background: var(--teal);
-      color: white !important;
-      padding: 11px 18px;
-      border-radius: 7px;
-    }
-
-    /* Hero */
-
-    .hero {
-      background: linear-gradient(120deg, var(--navy), var(--navy-light));
-      color: white;
-      padding: 82px 0 76px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 50%;
-      right: -100px;
-      top: -160px;
-      box-shadow: 0 0 0 45px rgba(255,255,255,0.025),
-                  0 0 0 90px rgba(255,255,255,0.025);
-    }
-
-    .hero-content {
-      max-width: 760px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .eyebrow {
-      color: #7CE0D5;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 2px;
-      font-size: 12px;
-      margin-bottom: 17px;
-    }
-
-    .hero h1 {
-      font-size: clamp(34px, 5vw, 54px);
-      line-height: 1.15;
-      margin-bottom: 20px;
-      letter-spacing: -1.2px;
-    }
-
-    .hero h1 span {
-      color: #65D1C7;
-    }
-
-    .hero p {
-      color: #D8E4EE;
-      font-size: 17px;
-      max-width: 660px;
-      margin-bottom: 30px;
-    }
-
-    .primary-btn {
-      display: inline-block;
-      background: var(--teal);
-      color: white;
-      border: 0;
-      border-radius: 7px;
-      padding: 14px 23px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    .primary-btn:hover {
-      background: var(--teal-dark);
-      transform: translateY(-2px);
-    }
-
-    /* Intro */
-
-    .intro {
-      text-align: center;
-      padding: 65px 0 35px;
-    }
-
-    .section-label {
-      color: var(--teal);
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 1.8px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .intro h2,
-    .enquiry-heading h2 {
-      color: var(--navy);
-      font-size: clamp(27px, 3.5vw, 36px);
-      margin-bottom: 13px;
-    }
-
-    .intro p {
-      max-width: 720px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    /* Service cards */
-
-    .services {
-      padding: 24px 0 75px;
-    }
-
-    .service-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 23px;
-    }
-
-    .service-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 27px 25px;
-      display: flex;
-      flex-direction: column;
-      min-height: 365px;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .service-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 18px 38px rgba(16,42,67,0.12);
-    }
-
-    .service-icon {
-      width: 53px;
-      height: 53px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #E6F5F3;
-      color: var(--teal-dark);
-      border-radius: 12px;
-      font-size: 25px;
-      margin-bottom: 20px;
-    }
-
-    .service-card h3 {
-      color: var(--navy);
-      font-size: 20px;
-      margin-bottom: 11px;
-    }
-
-    .service-card p {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-
-    .service-details {
-      border-top: 1px solid var(--border);
-      padding-top: 15px;
-      margin-top: auto;
-      margin-bottom: 19px;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 13px;
-      margin-bottom: 7px;
-    }
-
-    .detail-row span:first-child {
-      color: var(--muted);
-    }
-
-    .detail-row strong {
-      color: var(--navy);
-      text-align: right;
-    }
-
-    .choose-btn {
-      display: block;
-      width: 100%;
-      border: 1px solid var(--teal);
-      background: white;
-      color: var(--teal-dark);
-      padding: 11px 15px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: all 0.2s;
-    }
-
-    .choose-btn:hover,
-    .choose-btn.selected {
-      background: var(--teal);
-      color: white;
-    }
-
-    /* How it works */
-
-    .how-section {
-      background: white;
-      padding: 65px 0;
-    }
-
-    .how-heading {
-      text-align: center;
-      margin-bottom: 38px;
-    }
-
-    .how-heading h2 {
-      color: var(--navy);
-      font-size: 30px;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-    }
-
-    .step {
-      text-align: center;
-      padding: 10px 15px;
-    }
-
-    .step-number {
-      width: 43px;
-      height: 43px;
-      background: var(--navy);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 15px;
-      font-weight: 700;
-    }
-
-    .step h3 {
-      color: var(--navy);
-      font-size: 17px;
-      margin-bottom: 8px;
-    }
-
-    .step p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* Enquiry form */
-
-    .enquiry-section {
-      padding: 75px 0;
-    }
-
-    .enquiry-wrap {
-      max-width: 790px;
-      margin: 0 auto;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 38px;
-      box-shadow: var(--shadow);
-    }
-
-    .enquiry-heading {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .enquiry-heading p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 19px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .form-group.full {
-      grid-column: 1 / -1;
-    }
-
-    .form-group label {
-      color: var(--navy);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      border: 1px solid #CBD5E1;
-      border-radius: 7px;
-      padding: 12px 13px;
-      color: var(--text);
-      background: white;
-      outline: none;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(15,139,141,0.1);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 110px;
-    }
-
-    .form-note {
-      color: var(--muted);
-      font-size: 12px;
-      margin: 17px 0;
-    }
-
-    .submit-btn {
-      width: 100%;
-      text-align: center;
-    }
-
-    /* Footer */
-
-    footer {
-      background: var(--navy);
-      color: white;
-      padding: 37px 0 20px;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 25px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .footer-brand img {
-      width: 160px;
-      max-height: 48px;
-      object-fit: contain;
-      margin-bottom: 9px;
-    }
-
-    .footer-brand p,
-    .footer-links {
-      color: #C7D5E0;
-      font-size: 13px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a:hover {
-      color: #7CE0D5;
-    }
-
-    .copyright {
-      border-top: 1px solid rgba(255,255,255,0.15);
-      margin-top: 25px;
-      padding-top: 17px;
-      color: #B8C8D5;
-      font-size: 12px;
-      text-align: center;
-    }
-
+      --border: #DCE5EC;
+      --shadow: 0 18px 48px rgba(16, 42, 67, .09);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; line-height: 1.6; }
+    h1,h2,h3,h4 { font-family: 'Manrope', sans-serif; color: var(--navy); line-height: 1.2; margin-top: 0; }
+    a { color: var(--teal-dark); }
+    button,input { font: inherit; }
+    button { cursor: pointer; }
+    .container { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .site-header { background: rgba(255,255,255,.97); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
+    .nav { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--navy); font-family: 'Manrope',sans-serif; font-weight: 800; letter-spacing: -.3px; }
+    .brand img { width: auto; height: 48px; max-width: 210px; object-fit: contain; }
+    .brand-fallback { display: none; font-size: 19px; }
+    .nav-links { display: flex; align-items: center; gap: 25px; }
+    .nav-links a { text-decoration: none; color: var(--navy); font-size: 14px; font-weight: 700; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-cart { border: 1px solid var(--border); border-radius: 999px; padding: 9px 15px; background: white; color: var(--navy); font-weight: 700; }
+    .cart-count { display: inline-grid; place-items: center; background: var(--teal); color: white; border-radius: 50%; min-width: 22px; height: 22px; font-size: 12px; margin-left: 5px; }
+    .hero { position: relative; overflow: hidden; color: white; background: linear-gradient(115deg, #0A1F33 0%, #102A43 56%, #0B646B 100%); padding: 82px 0 76px; }
+    .hero::before { content: ''; position: absolute; width: 560px; height: 560px; border: 1px solid rgba(255,255,255,.12); border-radius: 50%; right: -130px; top: -280px; box-shadow: 0 0 0 55px rgba(255,255,255,.025), 0 0 0 110px rgba(255,255,255,.02); }
+    .hero::after { content: ''; position: absolute; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(15,139,141,.45), rgba(15,139,141,0)); right: 9%; bottom: -260px; }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 50px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; text-transform: uppercase; letter-spacing: 1.8px; font-size: 11px; font-weight: 700; color: #9DE0D8; margin-bottom: 18px; }
+    .eyebrow::before { content: ''; width: 25px; height: 2px; background: #55C7BC; }
+    .hero h1 { color: white; font-size: clamp(36px, 5vw, 58px); letter-spacing: -2px; margin-bottom: 20px; max-width: 700px; }
+    .hero p { color: #D6E4ED; font-size: 17px; max-width: 620px; margin: 0 0 28px; }
+    .hero-actions { display: flex; gap: 13px; flex-wrap: wrap; }
+    .btn { border: 0; border-radius: 9px; padding: 13px 20px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: .2s ease; }
+    .btn-primary { background: var(--teal); color: white; box-shadow: 0 8px 22px rgba(15,139,141,.25); }
+    .btn-primary:hover { background: #12A0A1; transform: translateY(-1px); }
+    .btn-outline { border: 1px solid rgba(255,255,255,.45); color: white; background: rgba(255,255,255,.06); }
+    .hero-art { min-height: 315px; position: relative; display: grid; place-items: center; }
+    .art-card { width: min(100%, 390px); background: rgba(255,255,255,.97); color: var(--navy); border-radius: 22px; padding: 25px; box-shadow: 0 28px 70px rgba(0,0,0,.24); transform: rotate(2deg); }
+    .art-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 23px; }
+    .art-mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--teal-soft); color: var(--teal-dark); font-size: 22px; }
+    .art-chip { border-radius: 999px; background: #E9F7F4; color: var(--teal-dark); padding: 5px 10px; font-size: 11px; font-weight: 700; }
+    .art-title { font: 800 21px 'Manrope',sans-serif; margin-bottom: 6px; }
+    .art-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+    .art-line { height: 8px; border-radius: 20px; background: #E7EDF2; margin: 10px 0; }
+    .art-line.wide { width: 100%; }.art-line.mid { width: 76%; }.art-line.short { width: 48%; }
+    .art-bottom { display: flex; gap: 8px; margin-top: 20px; }
+    .art-pill { background: #F1F5F9; color: #476174; border-radius: 7px; padding: 7px 9px; font-size: 10px; font-weight: 700; }
+    .floating-tag { position: absolute; bottom: 16px; left: 0; background: white; color: var(--navy); border-radius: 12px; padding: 12px 16px; font-size: 12px; font-weight: 700; box-shadow: var(--shadow); transform: rotate(-4deg); }
+    .trust-strip { background: white; border-bottom: 1px solid var(--border); }
+    .trust-items { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; padding: 19px 0; }
+    .trust-item { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--navy); font-size: 13px; font-weight: 700; }
+    .trust-icon { color: var(--teal); font-size: 18px; }
+    .section { padding: 76px 0; }
+    .section-heading { text-align: center; max-width: 720px; margin: 0 auto 38px; }
+    .section-label { text-transform: uppercase; letter-spacing: 1.7px; font-size: 11px; font-weight: 800; color: var(--teal-dark); margin-bottom: 12px; }
+    .section-heading h2 { font-size: clamp(28px, 3.5vw, 39px); letter-spacing: -1.1px; margin-bottom: 13px; }
+    .section-heading p { color: var(--muted); margin: 0; }
+    .service-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: stretch; }
+    .service-card { display: flex; flex-direction: column; background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 25px; box-shadow: 0 8px 26px rgba(16,42,67,.035); transition: .2s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #B8DCD9; }
+    .service-icon { width: 49px; height: 49px; display: grid; place-items: center; background: var(--teal-soft); border-radius: 14px; font-size: 23px; margin-bottom: 18px; }
+    .service-card h3 { font-size: 20px; margin-bottom: 13px; }
+    .service-card ul { padding-left: 19px; margin: 0 0 22px; color: var(--muted); font-size: 13px; flex: 1; }
+    .service-card li { padding-left: 2px; margin-bottom: 9px; }
+    .service-card li::marker { color: var(--teal); }
+    .service-meta { border-top: 1px solid var(--border); padding-top: 14px; margin-top: auto; }
+    .meta-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 4px 0; }
+    .meta-row span { color: var(--muted); }.meta-row strong { color: var(--navy); }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 17px; }
+    .add-btn,.buy-btn { border-radius: 8px; padding: 11px 9px; font-size: 12px; font-weight: 800; }
+    .add-btn { background: white; border: 1px solid var(--teal); color: var(--teal-dark); }
+    .add-btn:hover { background: var(--teal-soft); }
+    .buy-btn { background: var(--navy); border: 1px solid var(--navy); color: white; }
+    .buy-btn:hover { background: #1B4668; }
+    .process-section { background: white; padding: 76px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .process-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 38px; }
+    .process-step { padding: 25px; border: 1px solid var(--border); border-radius: 15px; background: #FBFDFE; }
+    .step-number { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 50%; background: var(--teal); color: white; font: 800 16px 'Manrope',sans-serif; margin-bottom: 17px; }
+    .process-step h3 { font-size: 18px; margin-bottom: 9px; }
+    .process-step p { color: var(--muted); font-size: 13px; margin: 0; }
+    .process-step a { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 700; }
+    .checkout-section { padding: 76px 0; }
+    .checkout-layout { display: grid; grid-template-columns: 1fr .85fr; gap: 25px; align-items: start; }
+    .checkout-card,.summary-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: 0 10px 30px rgba(16,42,67,.04); }
+    .checkout-card h2,.summary-card h3 { margin-bottom: 8px; }
+    .subtext { color: var(--muted); font-size: 13px; margin: 0 0 22px; }
+    .field { margin-bottom: 17px; }
+    .field label { display: block; color: var(--navy); font-size: 13px; font-weight: 700; margin-bottom: 7px; }
+    .field input { width: 100%; border: 1px solid #C9D6E0; border-radius: 8px; padding: 13px 14px; outline: none; background: #FCFDFE; color: var(--ink); }
+    .field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,139,141,.12); }
+    .form-note { color: var(--muted); font-size: 12px; margin: 12px 0 18px; }
+    .secure-note { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; margin-top: 15px; }
+    .checkout-submit { width: 100%; border: 0; border-radius: 9px; background: var(--teal); color: white; padding: 14px 18px; font-weight: 800; }
+    .checkout-submit:hover { background: var(--teal-dark); }
+    .checkout-submit:disabled { opacity: .55; cursor: not-allowed; }
+    .cart-empty { color: var(--muted); font-size: 14px; padding: 12px 0; }
+    .cart-line { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+    .cart-name { color: var(--navy); font-size: 13px; font-weight: 700; }
+    .cart-price { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .cart-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn,.remove-btn { border: 1px solid var(--border); background: white; color: var(--navy); border-radius: 6px; min-width: 27px; height: 27px; font-weight: 700; }
+    .remove-btn { padding: 0 7px; font-size: 11px; }
+    .qty { min-width: 15px; text-align: center; font-size: 12px; font-weight: 700; }
+    .cart-total { display: flex; justify-content: space-between; gap: 12px; padding: 19px 0 5px; color: var(--navy); font: 800 19px 'Manrope',sans-serif; }
+    .cart-discount { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .message { margin-top: 15px; padding: 13px 14px; border-radius: 9px; background: var(--teal-soft); color: var(--navy); font-size: 13px; overflow-wrap: anywhere; }
+    .message[hidden] { display: none; }
+    .message a { font-weight: 800; }
+    .footer { background: var(--navy-deep); color: #D6E4ED; padding: 34px 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .footer-brand { display: flex; align-items: center; gap: 12px; color: white; font-family: 'Manrope',sans-serif; font-weight: 800; }
+    .footer-brand img { max-height: 36px; max-width: 160px; object-fit: contain; filter: brightness(0) invert(1); }
+    .footer small { color: #AFC2D0; }
+    .footer a { color: #9DE0D8; text-decoration: none; font-size: 12px; }
     @media (max-width: 900px) {
-      .service-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .hero-grid { grid-template-columns: 1fr .8fr; gap: 25px; }
+      .service-grid { grid-template-columns: repeat(2,1fr); }
+      .checkout-layout { grid-template-columns: 1fr; }
     }
-
-    @media (max-width: 600px) {
-      .nav-inner {
-        min-height: 67px;
-      }
-
-      .brand img {
-        width: 145px;
-      }
-
-      .nav-links {
-        gap: 10px;
-        font-size: 12px;
-      }
-
-      .nav-links a:not(.nav-cta) {
-        display: none;
-      }
-
-      .nav-cta {
-        padding: 9px 12px;
-      }
-
-      .hero {
-        padding: 62px 0;
-      }
-
-      .hero p {
-        font-size: 15px;
-      }
-
-      .intro {
-        padding: 48px 0 25px;
-      }
-
-      .service-grid,
-      .steps,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .service-card {
-        min-height: auto;
-      }
-
-      .enquiry-wrap {
-        padding: 25px 19px;
-      }
-
-      .form-group.full {
-        grid-column: auto;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    @media (max-width: 650px) {
+      .container { width: min(100% - 30px, 560px); }
+      .nav { min-height: 68px; }.brand img { height: 40px; max-width: 170px; }
+      .nav-links a:not(.nav-cart) { display: none; }
+      .hero { padding: 58px 0 52px; }.hero-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 39px; letter-spacing: -1.4px; }.hero p { font-size: 15px; }
+      .hero-art { min-height: 250px; }.art-card { max-width: 340px; }.floating-tag { left: 2px; bottom: 0; }
+      .trust-items { grid-template-columns: 1fr; gap: 9px; }.trust-item { justify-content: flex-start; }
+      .section,.process-section,.checkout-section { padding: 55px 0; }
+      .service-grid,.process-grid { grid-template-columns: 1fr; }
+      .service-card { padding: 22px; }
+      .checkout-card,.summary-card { padding: 21px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
-
 <body>
-
-  <header class="navbar">
-    <div class="container nav-inner">
-      <a class="brand" href="/">
-        <img src="/logo.png" alt="Whizverse Consulting">
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="Whizverse Consulting home">
+        <img src="/logo.png" alt="Whizverse Consulting" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+        <span class="brand-fallback">Whizverse Consulting</span>
       </a>
-
       <nav class="nav-links" aria-label="Main navigation">
-        <a href="/">Home</a>
+        <a href="/#about">About</a>
         <a href="/job-seekers">Job Seekers</a>
-        <a class="nav-cta" href="#enquiry">Get Career Support</a>
+        <a href="#services">Services</a>
+        <button class="nav-cart" type="button" id="cartNavButton">Cart <span class="cart-count" id="cartCount">0</span></button>
       </nav>
     </div>
   </header>
 
   <main>
     <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <div class="eyebrow">Whizverse Consulting | Career Services</div>
-
-          <h1>
-            Take the Next Step in Your
-            <span>Career Journey.</span>
-          </h1>
-
-          <p>
-            Your experience deserves the right presentation and the right
-            opportunities. Get practical, personalised career support to
-            strengthen your professional profile and prepare for your next move.
-          </p>
-
-          <a href="#services" class="primary-btn">Explore Our Services</a>
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Career Services by Whizverse</div>
+          <h1>Make your next career move with confidence.</h1>
+          <p>Practical, profile-led career support to help you present your experience clearly, strengthen your professional brand and pursue relevant opportunities.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#services">Explore Services</a>
+            <a class="btn btn-outline" href="#process">How It Works</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Career profile illustration">
+          <div class="art-card">
+            <div class="art-top"><div class="art-mark">✦</div><div class="art-chip">CAREER READY</div></div>
+            <div class="art-title">Your professional story, better presented.</div>
+            <div class="art-sub">A clearer profile. A stronger direction.</div>
+            <div class="art-line wide"></div><div class="art-line mid"></div><div class="art-line short"></div>
+            <div class="art-bottom"><span class="art-pill">PROFILE</span><span class="art-pill">POSITIONING</span><span class="art-pill">OPPORTUNITY</span></div>
+          </div>
+          <div class="floating-tag">✓ Career support built around your profile</div>
         </div>
       </div>
     </section>
 
-    <section class="intro" id="services">
-      <div class="container">
-        <div class="section-label">Career Support Solutions</div>
-        <h2>Services Designed Around Your Career Goals</h2>
-        <p>
-          Whether you are looking for a stronger professional profile,
-          preparing for interviews or exploring new opportunities, choose
-          the support that best matches your career needs.
-        </p>
+    <section class="trust-strip" aria-label="Service highlights">
+      <div class="container trust-items">
+        <div class="trust-item"><span class="trust-icon">✓</span> Outcome-focused deliverables</div>
+        <div class="trust-item"><span class="trust-icon">⌖</span> Profile-led recommendations</div>
+        <div class="trust-item"><span class="trust-icon">▣</span> Secure Razorpay checkout</div>
       </div>
     </section>
 
-    <section class="services">
+    <section class="section" id="services">
       <div class="container">
+        <div class="section-heading">
+          <div class="section-label">Choose the support you need</div>
+          <h2>Career services designed around your next step</h2>
+          <p>Select an individual service or combine services in your cart. Review the deliverables and total before proceeding to payment.</p>
+        </div>
+
         <div class="service-grid">
-
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">📄</div>
+            <div class="service-icon">📄</div>
             <h3>Resume Rewriting</h3>
-            <p>
-              Transform your resume into a clear, professional and
-              achievement-focused document. Improve structure, role
-              positioning, impact statements and ATS readability.
-            </p>
-            <div class="service-details">
-              <div class="detail-row">
-                <span>Price</span>
-                <strong>To be confirmed</strong>
-              </div>
-              <div class="detail-row">
-                <span>Turnaround</span>
-                <strong>To be confirmed</strong>
-              </div>
-            </div>
-            <button class="choose-btn" data-service="Resume Rewriting">
-              Choose Service
-            </button>
+            <ul>
+              <li>ATS-friendly structure and keyword alignment</li>
+              <li>Achievement-focused experience bullets</li>
+              <li>Clear skills, strengths and career positioning</li>
+              <li>Professionally rewritten resume content</li>
+            </ul>
+            <div class="service-meta"><div class="meta-row"><span>Price</span><strong>₹7,500</strong></div><div class="meta-row"><span>Turnaround</span><strong>5 days</strong></div></div>
+            <div class="card-actions"><button class="add-btn" type="button" data-add="resume_rewriting">Add to Cart</button><button class="buy-btn" type="button" data-buy="resume_rewriting">Buy Now</button></div>
           </article>
 
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">✉️</div>
+            <div class="service-icon">✉️</div>
             <h3>Cover Letter</h3>
-            <p>
-              Get a professionally written cover letter tailored to your
-              experience, target role and career objectives, helping you
-              communicate your value to potential employers.
-            </p>
-            <div class="service-details">
-              <div class="detail-row">
-                <span>Price</span>
-                <strong>To be confirmed</strong>
-              </div>
-              <div class="detail-row">
-                <span>Turnaround</span>
-                <strong>To be confirmed</strong>
-              </div>
-            </div>
-            <button class="choose-btn" data-service="Cover Letter">
-              Choose Service
-            </button>
+            <ul>
+              <li>Professional cover letter tailored to your profile</li>
+              <li>Relevant achievements and strengths highlighted</li>
+              <li>Clear explanation of motivation and role fit</li>
+              <li>Adaptable content for your target applications</li>
+            </ul>
+            <div class="service-meta"><div class="meta-row"><span>Price</span><strong>₹4,700</strong></div><div class="meta-row"><span>Turnaround</span><strong>5 days</strong></div></div>
+            <div class="card-actions"><button class="add-btn" type="button" data-add="cover_letter">Add to Cart</button><button class="buy-btn" type="button" data-buy="cover_letter">Buy Now</button></div>
           </article>
 
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🔗</div>
+            <div class="service-icon">🔗</div>
             <h3>LinkedIn Optimisation</h3>
-            <p>
-              Strengthen your professional presence through an improved
-              headline, About section, experience descriptions, skills
-              and career positioning.
-            </p>
-            <div class="service-details">
-              <div class="detail-row">
-                <span>Price</span>
-                <strong>To be confirmed</strong>
-              </div>
-              <div class="detail-row">
-                <span>Turnaround</span>
-                <strong>To be confirmed</strong>
-              </div>
-            </div>
-            <button class="choose-btn" data-service="LinkedIn Optimisation">
-              Choose Service
-            </button>
+            <ul>
+              <li>Keyword-informed headline and About section</li>
+              <li>Experience descriptions aligned to target roles</li>
+              <li>Skills and professional positioning guidance</li>
+              <li>Recommendations to strengthen profile visibility</li>
+            </ul>
+            <div class="service-meta"><div class="meta-row"><span>Price</span><strong>₹7,500</strong></div><div class="meta-row"><span>Turnaround</span><strong>5 days</strong></div></div>
+            <div class="card-actions"><button class="add-btn" type="button" data-add="linkedin_optimisation">Add to Cart</button><button class="buy-btn" type="button" data-buy="linkedin_optimisation">Buy Now</button></div>
           </article>
 
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🎯</div>
+            <div class="service-icon">🎯</div>
             <h3>Interview Preparation</h3>
-            <p>
-              Prepare with role-specific interview questions, structured
-              answer frameworks and practical guidance to communicate
-              your experience with confidence.
-            </p>
-            <div class="service-details">
-              <div class="detail-row">
-                <span>Price</span>
-                <strong>To be confirmed</strong>
-              </div>
-              <div class="detail-row">
-                <span>Turnaround</span>
-                <strong>To be confirmed</strong>
-              </div>
-            </div>
-            <button class="choose-btn" data-service="Interview Preparation">
-              Choose Service
-            </button>
+            <ul>
+              <li>Review of your profile and target role</li>
+              <li>10 likely role-relevant interview questions</li>
+              <li>Structured STAR answer guidance</li>
+              <li>Practical preparation material delivered by email</li>
+            </ul>
+            <div class="service-meta"><div class="meta-row"><span>Price</span><strong>₹9,400</strong></div><div class="meta-row"><span>Delivery</span><strong>Via email</strong></div></div>
+            <div class="card-actions"><button class="add-btn" type="button" data-add="interview_preparation">Add to Cart</button><button class="buy-btn" type="button" data-buy="interview_preparation">Buy Now</button></div>
           </article>
 
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">💼</div>
+            <div class="service-icon">💼</div>
             <h3>Ready Job Pack</h3>
-            <p>
-              Receive a curated job opportunity pack based on your
-              experience, target roles, skills and preferred locations,
-              helping you focus your job search.
-            </p>
-            <div class="service-details">
-              <div class="detail-row">
-                <span>Price</span>
-                <strong>To be confirmed</strong>
-              </div>
-              <div class="detail-row">
-                <span>Turnaround</span>
-                <strong>To be confirmed</strong>
-              </div>
-            </div>
-            <button class="choose-btn" data-service="Ready Job Pack">
-              Choose Service
-            </button>
+            <ul>
+              <li>Curated job opportunities based on your profile</li>
+              <li>Consideration of your preferred roles and locations</li>
+              <li>Public job listings and employer career-page links</li>
+              <li>Direct application links for relevant opportunities</li>
+            </ul>
+            <div class="service-meta"><div class="meta-row"><span>Price</span><strong>₹9,400</strong></div><div class="meta-row"><span>Turnaround</span><strong>Within 3 days</strong></div></div>
+            <div class="card-actions"><button class="add-btn" type="button" data-add="ready_job_pack">Add to Cart</button><button class="buy-btn" type="button" data-buy="ready_job_pack">Buy Now</button></div>
           </article>
-
         </div>
+        <p class="form-note" style="text-align:center;margin-top:22px">Prices are displayed in INR. Interview Preparation is delivered by email; a specific turnaround commitment was not stated in the referenced service listing. Applicable taxes, if any, should be confirmed before live launch.</p>
       </div>
     </section>
 
-    <section class="how-section">
+    <section class="process-section" id="process">
       <div class="container">
-        <div class="how-heading">
+        <div class="section-heading">
           <div class="section-label">Simple Process</div>
-          <h2>How It Works</h2>
+          <h2>Choose. Verify. Pay.</h2>
+          <p>A straightforward checkout that connects your purchase to your existing candidate profile.</p>
         </div>
-
-        <div class="steps">
-          <div class="step">
-            <div class="step-number">1</div>
-            <h3>Select Your Service</h3>
-            <p>
-              Choose the career support service that best fits your
-              immediate requirements.
-            </p>
-          </div>
-
-          <div class="step">
-            <div class="step-number">2</div>
-            <h3>Share Your Requirements</h3>
-            <p>
-              Tell us about your career goals, current profile and the
-              support you are looking for.
-            </p>
-          </div>
-
-          <div class="step">
-            <div class="step-number">3</div>
-            <h3>Discuss the Next Steps</h3>
-            <p>
-              Our team will review your enquiry and discuss scope,
-              pricing and expected delivery before proceeding.
-            </p>
-          </div>
+        <div class="process-grid">
+          <div class="process-step"><div class="step-number">1</div><h3>Enter Your Details</h3><p>At checkout, enter the email address and mobile number used for your Whizverse registration.</p></div>
+          <div class="process-step"><div class="step-number">2</div><h3>We Find Your Profile</h3><p>If both details match an existing registration, your order is linked to that profile. If you are new, register first using the same email and mobile number, then return to checkout.</p><a href="/job-seekers">Register as a Job Seeker →</a></div>
+          <div class="process-step"><div class="step-number">3</div><h3>Pay Securely</h3><p>Review the selected services and total. Continue to Razorpay checkout. Your order is confirmed after payment is verified by our server.</p></div>
         </div>
       </div>
     </section>
 
-    <section class="enquiry-section" id="enquiry">
+    <section class="checkout-section" id="checkout">
       <div class="container">
-        <div class="enquiry-wrap">
-
-          <div class="enquiry-heading">
-            <div class="section-label">Let's Connect</div>
-            <h2>Request Career Support</h2>
-            <p>
-              Share a few details and tell us what you need.
-              Our team can discuss the service and next steps with you.
-            </p>
+        <div class="section-heading">
+          <div class="section-label">Secure Checkout</div>
+          <h2>Review your cart and continue</h2>
+          <p>Your cart is retained in this browser session while you complete checkout.</p>
+        </div>
+        <div class="checkout-layout">
+          <div class="checkout-card">
+            <h2>Your Details</h2>
+            <p class="subtext">Enter the same email and mobile number used when registering with Whizverse.</p>
+            <div class="field"><label for="checkoutEmail">Email address *</label><input id="checkoutEmail" type="email" autocomplete="email" placeholder="name@example.com" required></div>
+            <div class="field"><label for="checkoutPhone">Mobile number *</label><input id="checkoutPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="10-digit mobile number" required></div>
+            <p class="form-note">If your details do not match an existing candidate profile, you will be asked to register. We do not create a duplicate profile during checkout.</p>
+            <button class="checkout-submit" id="checkoutButton" type="button" disabled>Proceed to Payment</button>
+            <div class="secure-note"><span>🔒</span> Payment is processed securely by Razorpay. Card and UPI details are not stored on this website.</div>
+            <div class="message" id="checkoutMessage" role="status" aria-live="polite" hidden></div>
           </div>
-
-          <form id="serviceEnquiry">
-            <div class="form-grid">
-
-              <div class="form-group">
-                <label for="fullName">Full Name *</label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  placeholder="Enter your full name"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email Address *</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="phone">Contact Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  placeholder="Enter your contact number"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="service">Select a Service *</label>
-                <select id="service" name="service" required>
-                  <option value="">Choose a service</option>
-                  <option value="Resume Rewriting">Resume Rewriting</option>
-                  <option value="Cover Letter">Cover Letter</option>
-                  <option value="LinkedIn Optimisation">LinkedIn Optimisation</option>
-                  <option value="Interview Preparation">Interview Preparation</option>
-                  <option value="Ready Job Pack">Ready Job Pack</option>
-                  <option value="Multiple Services">Multiple Services</option>
-                </select>
-              </div>
-
-              <div class="form-group full">
-                <label for="requirements">Tell Us About Your Requirements</label>
-                <textarea
-                  id="requirements"
-                  name="requirements"
-                  placeholder="Briefly describe your current profile, target role, preferred location or the support you need."
-                ></textarea>
-              </div>
-
-            </div>
-
-            <p class="form-note">
-              By selecting Submit Enquiry, your email application will open
-              with your enquiry details. You can review the message before
-              sending it. No payment is collected on this page.
-            </p>
-
-            <button type="submit" class="primary-btn submit-btn">
-              Submit Enquiry
-            </button>
-          </form>
-
+          <aside class="summary-card">
+            <h3>Order Summary</h3>
+            <p class="subtext">Your selected career services</p>
+            <div id="cartItems"><div class="cart-empty">Your cart is empty. Choose a service above to get started.</div></div>
+            <div class="cart-discount">Bundle discount: None</div>
+            <div class="cart-discount">Currency: Indian Rupees (INR)</div>
+          </aside>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-
-        <div class="footer-brand">
-          <a href="/">
-            <img src="/logo.png" alt="Whizverse Consulting">
-          </a>
-          <p>Career guidance. Professional growth. Better opportunities.</p>
-        </div>
-
-        <div class="footer-links">
-          <a href="/">Home</a>
-          <a href="/job-seekers">Job Seekers</a>
-          <a href="#services">Career Services</a>
-          <a href="mailto:contact@whizverseconsulting.com">Contact Us</a>
-        </div>
-
-      </div>
-
-      <div class="copyright">
-        © <span id="currentYear"></span> Whizverse Consulting.
-        All rights reserved.
-      </div>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand"><img src="/logo.png" alt="" onerror="this.style.display='none'"><span>Whizverse Consulting</span></div>
+      <small>© <span id="currentYear"></span> Whizverse Consulting. All rights reserved.</small>
+      <div><a href="/privacy-policy">Privacy Policy</a> &nbsp;·&nbsp; <a href="/">Home</a></div>
     </div>
   </footer>
 
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    const serviceSelect = document.getElementById("service");
-    const serviceButtons = document.querySelectorAll(".choose-btn");
+    'use strict';
+    const SERVICE_CATALOG = {
+      resume_rewriting: { name: 'Resume Rewriting', price: 7500 },
+      cover_letter: { name: 'Cover Letter', price: 4700 },
+      linkedin_optimisation: { name: 'LinkedIn Optimisation', price: 7500 },
+      interview_preparation: { name: 'Interview Preparation', price: 9400 },
+      ready_job_pack: { name: 'Ready Job Pack', price: 9400 }
+    };
+    const CART_KEY = 'wz_career_services_cart';
+    let cart = {};
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(CART_KEY) || '{}');
+      if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+        for (const [id, quantity] of Object.entries(saved)) {
+          if (SERVICE_CATALOG[id] && Number.isInteger(quantity) && quantity > 0 && quantity <= 5) cart[id] = quantity;
+        }
+      }
+    } catch (_) { cart = {}; }
 
-    serviceButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const selectedService = button.dataset.service;
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartCountEl = document.getElementById('cartCount');
+    const checkoutButton = document.getElementById('checkoutButton');
+    const checkoutMessage = document.getElementById('checkoutMessage');
 
-        serviceSelect.value = selectedService;
-
-        serviceButtons.forEach((item) => {
-          item.classList.remove("selected");
-          item.textContent = "Choose Service";
-        });
-
-        button.classList.add("selected");
-        button.textContent = "Service Selected";
-
-        document.getElementById("enquiry").scrollIntoView({
-          behavior: "smooth"
-        });
-      });
-    });
-
-    document.getElementById("serviceEnquiry").addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const fullName = document.getElementById("fullName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const service = serviceSelect.value;
-      const requirements = document.getElementById("requirements").value.trim();
-
-      if (!fullName || !email || !service) {
-        alert("Please complete all required fields.");
+    function saveCart() {
+      try { sessionStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (_) { /* Cart remains usable for this page view. */ }
+    }
+    function money(amount) {
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+    }
+    function totalAmount() {
+      return Object.entries(cart).reduce((sum, [id, qty]) => sum + (SERVICE_CATALOG[id] ? SERVICE_CATALOG[id].price * qty : 0), 0);
+    }
+    function totalQuantity() {
+      return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+    }
+    function showMessage(message, showRegistrationLink = false) {
+      checkoutMessage.hidden = false;
+      checkoutMessage.replaceChildren(document.createTextNode(message));
+      if (showRegistrationLink) {
+        checkoutMessage.appendChild(document.createElement('br'));
+        const link = document.createElement('a');
+        link.href = '/job-seekers';
+        link.textContent = 'Register as a Job Seeker';
+        checkoutMessage.appendChild(link);
+        checkoutMessage.appendChild(document.createTextNode(' using the same email and mobile number, then return to checkout.'));
+      }
+    }
+    function renderCart() {
+      cartItemsEl.replaceChildren();
+      const entries = Object.entries(cart).filter(([id, qty]) => SERVICE_CATALOG[id] && Number.isInteger(qty) && qty >= 1 && qty <= 5);
+      cartCountEl.textContent = String(totalQuantity());
+      if (!entries.length) {
+        cart = {};
+        const empty = document.createElement('div');
+        empty.className = 'cart-empty';
+        empty.textContent = 'Your cart is empty. Choose a service above to get started.';
+        cartItemsEl.appendChild(empty);
+        checkoutButton.disabled = true;
+        saveCart();
         return;
       }
+      checkoutButton.disabled = false;
+      entries.forEach(([id, qty]) => {
+        const service = SERVICE_CATALOG[id];
+        const line = document.createElement('div');
+        line.className = 'cart-line';
+        const detail = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'cart-name';
+        name.textContent = service.name;
+        const price = document.createElement('div');
+        price.className = 'cart-price';
+        price.textContent = `${qty} × ${money(service.price)} = ${money(qty * service.price)}`;
+        detail.append(name, price);
+        const controls = document.createElement('div');
+        controls.className = 'cart-controls';
+        const minus = document.createElement('button');
+        minus.type = 'button'; minus.className = 'qty-btn'; minus.textContent = '−';
+        minus.setAttribute('aria-label', `Remove one ${service.name}`);
+        minus.addEventListener('click', () => changeQuantity(id, -1));
+        const count = document.createElement('span'); count.className = 'qty'; count.textContent = String(qty);
+        const plus = document.createElement('button');
+        plus.type = 'button'; plus.className = 'qty-btn'; plus.textContent = '+';
+        plus.setAttribute('aria-label', `Add one ${service.name}`);
+        plus.disabled = qty >= 5;
+        plus.addEventListener('click', () => changeQuantity(id, 1));
+        const remove = document.createElement('button');
+        remove.type = 'button'; remove.className = 'remove-btn'; remove.textContent = 'Remove';
+        remove.addEventListener('click', () => { delete cart[id]; saveCart(); renderCart(); });
+        controls.append(minus, count, plus, remove);
+        line.append(detail, controls);
+        cartItemsEl.appendChild(line);
+      });
+      const total = document.createElement('div');
+      total.className = 'cart-total';
+      const label = document.createElement('span'); label.textContent = 'Total payable';
+      const amount = document.createElement('span'); amount.textContent = money(totalAmount());
+      total.append(label, amount);
+      cartItemsEl.appendChild(total);
+    }
+    function changeQuantity(id, delta) {
+      const next = (cart[id] || 0) + delta;
+      if (next < 1) delete cart[id];
+      else if (next <= 5) cart[id] = next;
+      saveCart(); renderCart();
+    }
+    function addService(id) {
+      if (!SERVICE_CATALOG[id]) return;
+      if ((cart[id] || 0) >= 5) { showMessage('Maximum quantity for each service is five.'); return; }
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart(); renderCart();
+      showMessage(`${SERVICE_CATALOG[id].name} added to your cart.`);
+    }
+    function buyNow(id) {
+      if (!SERVICE_CATALOG[id]) return;
+      cart = { [id]: 1 };
+      saveCart(); renderCart();
+      document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' });
+      const email = document.getElementById('checkoutEmail').value.trim();
+      const phone = document.getElementById('checkoutPhone').value.trim();
+      if (email && phone) startCheckout();
+      else showMessage('This service is selected. Enter your email and mobile number to continue.');
+    }
+    document.querySelectorAll('[data-add]').forEach(button => button.addEventListener('click', () => addService(button.dataset.add)));
+    document.querySelectorAll('[data-buy]').forEach(button => button.addEventListener('click', () => buyNow(button.dataset.buy)));
+    document.getElementById('cartNavButton').addEventListener('click', () => document.getElementById('checkout').scrollIntoView({ behavior: 'smooth' }));
+    checkoutButton.addEventListener('click', startCheckout);
 
-      const subject = "Career Services Enquiry - " + service;
-
-      const message = [
-        "Hello Whizverse Consulting Team,",
-        "",
-        "I would like to enquire about your career services.",
-        "",
-        "Name: " + fullName,
-        "Email: " + email,
-        "Contact Number: " + (phone || "Not provided"),
-        "Selected Service: " + service,
-        "",
-        "Requirements:",
-        requirements || "Not provided",
-        "",
-        "Please share the next steps, pricing and expected turnaround time.",
-        "",
-        "Regards,",
-        fullName
-      ].join("\n");
-
-      const mailtoLink =
-        "mailto:contact@whizverseconsulting.com" +
-        "?subject=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(message);
-
-      window.location.href = mailtoLink;
-    });
-
-    document.getElementById("currentYear").textContent =
-      new Date().getFullYear();
+    async function startCheckout() {
+      if (checkoutButton.disabled) return;
+      const email = document.getElementById('checkoutEmail').value.trim();
+      const phone = document.getElementById('checkoutPhone').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMessage('Please enter a valid email address.'); return; }
+      if (phone.replace(/\D/g, '').length < 10) { showMessage('Please enter a valid mobile number.'); return; }
+      if (!Object.keys(cart).length) { showMessage('Please add at least one service to your cart.'); return; }
+      if (typeof window.Razorpay !== 'function') { showMessage('Razorpay checkout did not load. Refresh the page and try again.'); return; }
+      checkoutButton.disabled = true;
+      showMessage('Checking your profile and creating your secure payment order...');
+      try {
+        const items = Object.entries(cart).map(([id, quantity]) => ({ id, quantity }));
+        const orderResponse = await fetch('/api/career-services/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ email, phone, items })
+        });
+        const order = await orderResponse.json();
+        if (orderResponse.status === 409 && order.error === 'registration_required') {
+          checkoutButton.disabled = false;
+          showMessage('We could not match both details to an existing registered profile.', true);
+          return;
+        }
+        if (!orderResponse.ok || !order.success) throw new Error(order.error || 'Could not create your payment order.');
+        if (!order.keyId || !order.orderId || !Number.isSafeInteger(order.amount)) throw new Error('The payment order response was incomplete.');
+        showMessage('Opening Razorpay secure checkout...');
+        const razorpay = new window.Razorpay({
+          key: order.keyId,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'Whizverse Consulting',
+          description: 'Career Services Order',
+          order_id: order.orderId,
+          prefill: { name: order.name, email: order.email, contact: order.phone },
+          theme: { color: '#0F8B8D' },
+          modal: { ondismiss: () => { checkoutButton.disabled = false; showMessage('Checkout closed. Your cart is still available.'); } },
+          handler: async function(payment) {
+            checkoutButton.disabled = true;
+            showMessage('Payment submitted. Verifying payment securely...');
+            try {
+              const verifyResponse = await fetch('/api/career-services/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                  razorpay_order_id: payment.razorpay_order_id,
+                  razorpay_payment_id: payment.razorpay_payment_id,
+                  razorpay_signature: payment.razorpay_signature
+                })
+              });
+              const result = await verifyResponse.json();
+              if (verifyResponse.ok && result.success && result.status === 'paid') {
+                cart = {}; saveCart(); renderCart();
+                showMessage('Payment verified successfully. Your order is confirmed. Please retain your Razorpay payment reference.');
+              } else {
+                showMessage('Payment is not yet confirmed. Please do not pay again immediately. If money was debited, contact Whizverse support with your Razorpay payment reference.');
+              }
+            } catch (_) {
+              showMessage('We could not confirm payment from this browser. If money was debited, please contact Whizverse support with your Razorpay payment reference.');
+            } finally { checkoutButton.disabled = !Object.keys(cart).length; }
+          }
+        });
+        razorpay.on('payment.failed', function() {
+          checkoutButton.disabled = false;
+          showMessage('Payment was not completed. Your cart is still available; you may retry when ready.');
+        });
+        razorpay.open();
+      } catch (error) {
+        showMessage(error.message || 'Checkout could not start. Please try again.');
+        checkoutButton.disabled = !Object.keys(cart).length;
+      }
+    }
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    renderCart();
   </script>
-
 </body>
 </html>
