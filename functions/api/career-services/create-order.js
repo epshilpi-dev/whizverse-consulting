@@ -2,7 +2,7 @@
 const SERVICES = {
   resume_rewriting: {
     name: "Resume Rewriting",
-    price: 7500
+    price: 50
   },
   cover_letter: {
     name: "Cover Letter",
