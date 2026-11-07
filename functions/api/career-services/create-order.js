@@ -2,11 +2,11 @@
 const SERVICES = {
   resume_rewriting: {
     name: "Resume Rewriting",
-    price: 50
+    price: 1499
   },
   cover_letter: {
     name: "Cover Letter",
-    price: 4700
+    price: 999
   },
   linkedin_optimisation: {
     name: "LinkedIn Optimisation",
@@ -14,11 +14,11 @@ const SERVICES = {
   },
   interview_preparation: {
     name: "Interview Preparation",
-    price: 9400
+    price: 1999
   },
   ready_job_pack: {
     name: "Ready Job Pack",
-    price: 9400
+    price: 4999
   }
 };
 
