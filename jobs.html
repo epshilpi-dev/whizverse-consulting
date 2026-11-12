@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -242,4 +241,121 @@
         </form>
 
         <p class="privacy-note">
-         
+          Applications are completed on the original employer or
+          job-portal website. This site does not collect your CV
+          or application.
+        </p>
+
+      </section>
+
+      <!-- JOB RESULTS -->
+      <section class="results-section">
+
+        <div class="results-heading">
+
+          <div>
+            <h2>Latest opportunities</h2>
+
+            <p id="result-summary" aria-live="polite">
+              Loading job listings…
+            </p>
+          </div>
+
+          <button id="refresh-btn"
+                  class="secondary-btn"
+                  type="button">
+            Refresh
+          </button>
+
+        </div>
+
+        <div id="status"
+             class="status"
+             role="status">
+        </div>
+
+        <div id="jobs-list" class="jobs-grid"></div>
+
+        <div id="empty-state" class="empty-state" hidden>
+
+          <h3>No matching jobs found</h3>
+
+          <p>
+            Try a broader keyword or another country.
+            You can also search the external portals above.
+          </p>
+
+        </div>
+
+        <div id="pagination" class="pagination" hidden>
+
+          <button id="load-more"
+                  class="secondary-btn"
+                  type="button">
+            Load more
+          </button>
+
+        </div>
+
+      </section>
+
+      <!-- DISCLAIMER -->
+      <section class="disclaimer">
+
+        <strong>Source and freshness:</strong>
+
+        Listings are retrieved from supported job-search feeds
+        and may change or expire at the source. Always verify
+        role details, location, visa eligibility and closing
+        dates on the employer's application page.
+
+      </section>
+
+    </main>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+
+    <div class="container footer-grid">
+
+      <div>
+        <img src="logo.png" alt="Whizverse Consulting">
+      </div>
+
+      <p>
+        © <span id="year"></span> Whizverse Consulting.
+        All Rights Reserved.
+      </p>
+
+      <div class="footer-links">
+
+        <a href="https://www.linkedin.com/company/whizverse-consulting"
+           target="_blank"
+           rel="noopener">
+          LinkedIn
+        </a>
+
+        <a href="mailto:contact@whizverseconsulting.com">
+          contact@whizverseconsulting.com
+        </a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+  <!-- JOB LISTING JAVASCRIPT -->
+  <script src="js/jobs.js" defer></script>
+
+  <!-- CLOUDFLARE WEB ANALYTICS -->
+  <script
+    type="module"
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "70a1702ef7cc426483fc60727b87cd1c"}'>
+  </script>
+
+</body>
+</html>
