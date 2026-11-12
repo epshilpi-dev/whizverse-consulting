@@ -1,72 +1,357 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore technology and IT job opportunities in India and worldwide. Search software, cloud, cybersecurity, data, AI and technology leadership roles.">
+
+  <meta name="description" content="Explore technology and IT job opportunities across India, the UK, Ireland, Germany, Netherlands, Switzerland, Singapore, Australia and New Zealand.">
+
+  <meta name="theme-color" content="#ffffff">
+
   <title>Technology & IT Jobs | Whizverse Consulting</title>
+
   <link rel="stylesheet" href="css/jobs.css">
+
+  <style>
+    /* Consistent Whizverse header and logo presentation */
+
+    .site-header {
+      min-height: 82px;
+      padding: 12px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      background: #ffffff;
+      border-bottom: 1px solid #e8edf3;
+      box-sizing: border-box;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #142b4a;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-name {
+      font-size: 21px;
+      font-weight: 750;
+      letter-spacing: -0.5px;
+      color: #142b4a;
+    }
+
+    .brand-tagline {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+
+    .site-header nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .site-header nav a {
+      text-decoration: none;
+      color: #334155;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .site-header nav a.active {
+      color: #2563eb;
+    }
+
+    .site-header nav a:hover {
+      color: #2563eb;
+    }
+
+    @media (max-width: 600px) {
+      .site-header {
+        padding: 12px 4%;
+        min-height: 72px;
+        gap: 10px;
+      }
+
+      .brand-logo {
+        width: 42px;
+        height: 42px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+
+      .brand-tagline {
+        font-size: 9px;
+        letter-spacing: 0.5px;
+      }
+
+      .site-header nav {
+        gap: 12px;
+      }
+
+      .site-header nav a {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
+  <!-- WHIZVERSE HEADER -->
   <header class="site-header">
-    <a class="brand" href="index.html">Whizverse Consulting <span>Global Talent & Recruitment</span></a>
-    <nav><a href="index.html">Home</a><a class="active" href="jobs.html">IT Jobs</a></nav>
+
+    <a class="brand" href="index.html" aria-label="Whizverse Consulting Home">
+
+      <!-- Replace this path with the exact logo asset used on your homepage -->
+      <img
+        class="brand-logo"
+        src="/logo.png"
+        alt="Whizverse Consulting logo"
+        onerror="this.hidden=true"
+      >
+
+      <span class="brand-text">
+        <span class="brand-name">Whizverse Consulting</span>
+        <span class="brand-tagline">Global Talent & Recruitment</span>
+      </span>
+
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a class="active" href="jobs.html" aria-current="page">IT Jobs</a>
+    </nav>
+
   </header>
+
   <main class="page-wrap">
+
+    <!-- HERO SECTION -->
     <section class="hero">
+
       <p class="eyebrow">GLOBAL CAREER OPPORTUNITIES</p>
+
       <h1>Technology & IT Jobs</h1>
-      <p class="intro">Discover technology opportunities across India and international markets. Search roles in software, cloud, cybersecurity, data, AI, architecture and technology leadership.</p>
+
+      <p class="intro">
+        Discover technology opportunities across India and international
+        markets. Search roles in software, cloud, cybersecurity, data,
+        AI, architecture and technology leadership.
+      </p>
+
       <div class="portal-links" aria-label="Search jobs directly on job portals">
-        <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/jobs/search/?keywords=Technology%20IT">LinkedIn</a>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.indeed.com/jobs?q=technology+IT">Indeed</a>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.glassdoor.com/Job/technology-jobs-SRCH_KO0,10.htm">Glassdoor</a>
-        <a target="_blank" rel="noopener noreferrer" href="https://wellfound.com/jobs">Wellfound</a>
+
+        <a target="_blank" rel="noopener noreferrer"
+           href="https://www.linkedin.com/jobs/search/?keywords=Technology%20IT">
+          LinkedIn
+        </a>
+
+        <a target="_blank" rel="noopener noreferrer"
+           href="https://www.indeed.com/jobs?q=technology+IT">
+          Indeed
+        </a>
+
+        <a target="_blank" rel="noopener noreferrer"
+           href="https://www.glassdoor.com/Job/technology-jobs-SRCH_KO0,10.htm">
+          Glassdoor
+        </a>
+
+        <a target="_blank" rel="noopener noreferrer"
+           href="https://wellfound.com/jobs">
+          Wellfound
+        </a>
+
       </div>
+
     </section>
 
+    <!-- SEARCH AND FILTER SECTION -->
     <section class="search-panel" aria-label="Filter jobs">
+
       <form id="filters-form">
-        <label class="search-field">Keywords
-          <input id="keyword" name="keyword" type="search" placeholder="e.g. Cloud Architect, AI, CTO">
+
+        <label class="search-field">
+          Keywords
+
+          <input
+            id="keyword"
+            name="keyword"
+            type="search"
+            placeholder="e.g. Cloud Architect, AI, CTO"
+          >
         </label>
-        <label>Country
+
+        <label>
+          Country
+
           <select id="country" name="country">
-            <option value="all">All countries</option>
-            <option value="in">India</option><option value="gb">United Kingdom</option>
-            <option value="ie">Ireland</option><option value="de">Germany</option>
-            <option value="nl">Netherlands</option><option value="ch">Switzerland</option>
-            <option value="us">United States</option><option value="ca">Canada</option>
-            <option value="sg">Singapore</option><option value="au">Australia</option>
+
+            <option value="all">All Countries</option>
+
+            <option value="gb">United Kingdom</option>
+            <option value="ie">Ireland</option>
+            <option value="de">Germany</option>
+            <option value="nl">Netherlands</option>
+            <option value="ch">Switzerland</option>
+
+            <option value="in">India</option>
+            <option value="sg">Singapore</option>
+            <option value="au">Australia</option>
             <option value="nz">New Zealand</option>
+
           </select>
         </label>
-        <label>Work mode
-          <select id="work-mode" name="work-mode"><option value="any">Any</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">On-site / office</option></select>
+
+        <label>
+          Work mode
+
+          <select id="work-mode" name="work-mode">
+            <option value="any">Any</option>
+            <option value="remote">Remote</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="onsite">On-site / office</option>
+          </select>
         </label>
-        <label>Seniority / role
-          <select id="seniority" name="seniority"><option value="any">All levels</option><option value="leadership">Leadership / Director / VP</option><option value="architect">Architect / Principal</option><option value="senior">Senior / Lead</option><option value="engineering">Engineering / Specialist</option></select>
+
+        <label>
+          Seniority / role
+
+          <select id="seniority" name="seniority">
+            <option value="any">All levels</option>
+            <option value="leadership">Leadership / Director / VP</option>
+            <option value="architect">Architect / Principal</option>
+            <option value="senior">Senior / Lead</option>
+            <option value="engineering">Engineering / Specialist</option>
+          </select>
         </label>
-        <label>Posted
-          <select id="posted" name="posted"><option value="any">Any time</option><option value="1">Last 24 hours</option><option value="3">Last 3 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+
+        <label>
+          Posted
+
+          <select id="posted" name="posted">
+            <option value="any">Any time</option>
+            <option value="1">Last 24 hours</option>
+            <option value="3">Last 3 days</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+          </select>
         </label>
-        <button type="submit" class="primary-btn">Search jobs</button>
+
+        <button type="submit" class="primary-btn">
+          Search jobs
+        </button>
+
       </form>
-      <p class="privacy-note">Applications are completed on the original employer or job-portal website. This site does not collect your CV or application.</p>
+
+      <p class="privacy-note">
+        Applications are completed on the original employer or job-portal
+        website. This site does not collect your CV or application.
+      </p>
+
     </section>
 
+    <!-- JOB RESULTS -->
     <section class="results-section">
-      <div class="results-heading"><div><h2>Latest opportunities</h2><p id="result-summary" aria-live="polite">Loading job listings…</p></div><button id="refresh-btn" class="secondary-btn" type="button">Refresh</button></div>
+
+      <div class="results-heading">
+
+        <div>
+          <h2>Latest opportunities</h2>
+          <p id="result-summary" aria-live="polite">
+            Loading job listings…
+          </p>
+        </div>
+
+        <button id="refresh-btn" class="secondary-btn" type="button">
+          Refresh
+        </button>
+
+      </div>
+
       <div id="status" class="status" role="status"></div>
+
       <div id="jobs-list" class="jobs-grid"></div>
-      <div id="empty-state" class="empty-state" hidden><h3>No matching jobs found</h3><p>Try a broader keyword or another country. You can also search the external portals above.</p></div>
-      <div id="pagination" class="pagination" hidden><button id="load-more" class="secondary-btn" type="button">Load more</button></div>
+
+      <div id="empty-state" class="empty-state" hidden>
+
+        <h3>No matching jobs found</h3>
+
+        <p>
+          Try a broader keyword or another country.
+          You can also search the external portals above.
+        </p>
+
+      </div>
+
+      <div id="pagination" class="pagination" hidden>
+
+        <button id="load-more" class="secondary-btn" type="button">
+          Load more
+        </button>
+
+      </div>
+
     </section>
-    <section class="disclaimer"><strong>Source and freshness:</strong> Listings are retrieved from supported job-search feeds and may change or expire at the source. Always verify role details, location, visa eligibility and closing dates on the employer's application page.</section>
+
+    <!-- DISCLAIMER -->
+    <section class="disclaimer">
+
+      <strong>Source and freshness:</strong>
+
+      Listings are retrieved from supported job-search feeds and may
+      change or expire at the source. Always verify role details,
+      location, visa eligibility and closing dates on the employer's
+      application page.
+
+    </section>
+
   </main>
-  <footer><span>© <span id="year"></span> Whizverse Consulting</span><a href="index.html">Back to website</a></footer>
+
+  <!-- FOOTER -->
+  <footer>
+
+    <span>
+      © <span id="year"></span> Whizverse Consulting
+    </span>
+
+    <a href="index.html">Back to website</a>
+
+  </footer>
+
+  <!-- JOB LISTING JAVASCRIPT -->
   <script src="js/jobs.js" defer></script>
 
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "70a1702ef7cc426483fc60727b87cd1c"}'></script><!-- End Cloudflare Web Analytics -->
+  <!-- CLOUDFLARE WEB ANALYTICS -->
+  <script
+    type="module"
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "70a1702ef7cc426483fc60727b87cd1c"}'>
+  </script>
+
 </body>
 </html>
+```
