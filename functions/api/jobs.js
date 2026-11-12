@@ -1,10 +1,58 @@
 
-const COUNTRY_CODES = new Set([
-  "in", "gb", "ie", "de", "nl", "ch",
-  "us", "ca", "sg", "au", "nz"
-]);
+const JOOBLE_COUNTRIES = {
+  gb: {
+    name: "United Kingdom",
+    domain: "uk",
+    secret: "JOOBLE_UK_API_KEY"
+  },
+  ie: {
+    name: "Ireland",
+    domain: "ie",
+    secret: "JOOBLE_IE_API_KEY"
+  },
+  de: {
+    name: "Germany",
+    domain: "de",
+    secret: "JOOBLE_DE_API_KEY"
+  },
+  nl: {
+    name: "Netherlands",
+    domain: "nl",
+    secret: "JOOBLE_NL_API_KEY"
+  },
+  ch: {
+    name: "Switzerland",
+    domain: "ch",
+    secret: "JOOBLE_CH_API_KEY"
+  },
+  in: {
+    name: "India",
+    domain: "in",
+    secret: "JOOBLE_IN_API_KEY"
+  },
+  sg: {
+    name: "Singapore",
+    domain: "sg",
+    secret: "JOOBLE_SG_API_KEY"
+  },
+  au: {
+    name: "Australia",
+    domain: "au",
+    secret: "JOOBLE_AU_API_KEY"
+  },
+  nz: {
+    name: "New Zealand",
+    domain: "nz",
+    secret: "JOOBLE_NZ_API_KEY"
+  }
+};
+
+const COUNTRY_CODES = new Set(
+  Object.keys(JOOBLE_COUNTRIES)
+);
 
 const DEFAULT_KEYWORDS = "software engineer";
+const CACHE_TTL = 1800;
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -18,33 +66,78 @@ export async function onRequestGet({ request, env }) {
   ).trim().slice(0, 100) || DEFAULT_KEYWORDS;
 
   if (country !== "all" && !COUNTRY_CODES.has(country)) {
-    return json({ jobs: [], error: "Unsupported country." }, 400);
+    return json({
+      jobs: [],
+      total: 0,
+      error: "Unsupported country."
+    }, 400);
   }
 
-  // Himalayas remains available for all supported countries.
+  // Always retain Himalayas.
   const tasks = [
-    fetchHimalayas(keyword, country)
+    {
+      name: "Himalayas",
+      run: () => fetchHimalayas(keyword, country)
+    }
   ];
 
-  // Jooble UK is only queried for UK or all-country searches.
-  const joobleEnabled =
-    country === "all" || country === "gb";
+  // For a specific country, query only that Jooble provider.
+  // For All Countries, query all nine configured providers.
+  const selectedCountries = country === "all"
+    ? Object.keys(JOOBLE_COUNTRIES)
+    : [country];
 
-  if (joobleEnabled && env.JOOBLE_UK_API_KEY) {
-    tasks.push(fetchJoobleUK(keyword, env.JOOBLE_UK_API_KEY));
+  for (const code of selectedCountries) {
+    const config = JOOBLE_COUNTRIES[code];
+    const apiKey = env[config.secret];
+
+    if (!apiKey) continue;
+
+    tasks.push({
+      name: `Jooble ${code}`,
+      run: () => fetchJoobleCached(
+        keyword,
+        code,
+        config,
+        apiKey
+      )
+    });
   }
 
-  const results = await Promise.allSettled(tasks);
+  const results = await Promise.allSettled(
+    tasks.map(task => task.run())
+  );
 
-  const himalayasOk = results[0].status === "fulfilled";
-  const himalayasJobs = himalayasOk ? results[0].value : [];
+  const himalayasOk =
+    results[0].status === "fulfilled";
 
-  let joobleOk = false;
+  const himalayasJobs = himalayasOk
+    ? results[0].value
+    : [];
+
   let joobleJobs = [];
+  const joobleCountries = {};
+  const providerErrors = {};
 
-  if (joobleEnabled && env.JOOBLE_UK_API_KEY) {
-    joobleOk = results[1]?.status === "fulfilled";
-    joobleJobs = joobleOk ? results[1].value : [];
+  if (!himalayasOk) {
+    providerErrors.himalayas =
+      String(results[0].reason?.message || "Unknown error");
+  }
+
+  for (let i = 1; i < tasks.length; i++) {
+    const task = tasks[i];
+    const code = task.name.replace("Jooble ", "");
+    const result = results[i];
+
+    joobleCountries[code] =
+      result.status === "fulfilled";
+
+    if (result.status === "fulfilled") {
+      joobleJobs.push(...result.value);
+    } else {
+      providerErrors[`jooble_${code}`] =
+        String(result.reason?.message || "Unknown error");
+    }
   }
 
   const jobs = deduplicateJobs([
@@ -52,11 +145,12 @@ export async function onRequestGet({ request, env }) {
     ...joobleJobs
   ]);
 
+  const joobleOk = joobleJobs.length > 0;
+
   const providers = {
     himalayas: himalayasOk,
-    jooble: joobleEnabled
-      ? Boolean(env.JOOBLE_UK_API_KEY) && joobleOk
-      : false
+    jooble: joobleOk,
+    joobleCountries
   };
 
   if (!himalayasOk && !joobleOk) {
@@ -64,23 +158,56 @@ export async function onRequestGet({ request, env }) {
       jobs: [],
       total: 0,
       error: "Job listings are temporarily unavailable. Please try again shortly.",
-      providers
+      providers,
+      providerErrors
     }, 502);
   }
 
   const activeSources = [];
 
-  if (himalayasOk) activeSources.push("Himalayas");
-  if (joobleOk) activeSources.push("Jooble");
+  if (himalayasOk) {
+    activeSources.push("Himalayas");
+  }
+
+  if (joobleOk) {
+    activeSources.push("Jooble");
+  }
+
+  const successfulJoobleCountries = Object.keys(joobleCountries)
+    .filter(code => joobleCountries[code])
+    .map(code => JOOBLE_COUNTRIES[code].name);
+
+  const sources = [];
+
+  if (himalayasOk) {
+    sources.push({
+      name: "Himalayas",
+      url: "https://himalayas.app/"
+    });
+  }
+
+  for (const code of Object.keys(joobleCountries)) {
+    if (joobleCountries[code]) {
+      const config = JOOBLE_COUNTRIES[code];
+
+      sources.push({
+        name: `Jooble - ${config.name}`,
+        url: `https://${config.domain}.jooble.org/`
+      });
+    }
+  }
 
   let notice;
 
-  if (activeSources.length === 2) {
-    notice = "Explore job opportunities from Himalayas and Jooble. Listings link to their original job sources.";
+  if (himalayasOk && joobleOk) {
+    notice =
+      `Explore job opportunities from Himalayas and Jooble across ${successfulJoobleCountries.join(", ")}.`;
   } else if (himalayasOk) {
-    notice = "Explore job opportunities from Himalayas. Additional job sources may be temporarily unavailable.";
+    notice =
+      "Explore job opportunities from Himalayas. Additional job sources may be temporarily unavailable.";
   } else {
-    notice = "Explore UK job opportunities from Jooble. Additional job sources may be temporarily unavailable.";
+    notice =
+      `Explore job opportunities from Jooble across ${successfulJoobleCountries.join(", ")}.`;
   }
 
   return json({
@@ -89,21 +216,13 @@ export async function onRequestGet({ request, env }) {
     notice,
     source: activeSources.join(", "),
     providers,
-    sources: [
-      {
-        name: "Himalayas",
-        url: "https://himalayas.app/"
-      },
-      {
-        name: "Jooble",
-        url: "https://uk.jooble.org/"
-      }
-    ]
+    providerErrors,
+    sources
   });
 }
 
 // --------------------------------------------------
-// HIMALAYAS — ORIGINAL WORKING INTEGRATION
+// HIMALAYAS
 // --------------------------------------------------
 
 async function fetchHimalayas(keyword, country) {
@@ -120,7 +239,9 @@ async function fetchHimalayas(keyword, country) {
   }
 
   const response = await fetch(api.toString(), {
-    headers: { Accept: "application/json" }
+    headers: {
+      Accept: "application/json"
+    }
   });
 
   if (!response.ok) {
@@ -133,7 +254,7 @@ async function fetchHimalayas(keyword, country) {
     throw new Error("Invalid Himalayas response");
   }
 
-  return payload.jobs.map((item) => {
+  return payload.jobs.map(item => {
     const salaryCurrency = item.currency || "";
     const salaryMin = item.minSalary;
     const salaryMax = item.maxSalary;
@@ -141,7 +262,7 @@ async function fetchHimalayas(keyword, country) {
     let salary = "";
 
     if (salaryMin != null || salaryMax != null) {
-      const fmt = (value) =>
+      const fmt = value =>
         new Intl.NumberFormat("en", {
           maximumFractionDigits: 0
         }).format(value);
@@ -151,7 +272,8 @@ async function fetchHimalayas(keyword, country) {
           ? `${fmt(salaryMin)}–${fmt(salaryMax)}`
           : fmt(salaryMin ?? salaryMax);
 
-      salary = `${salaryCurrency} ${range} (${item.salaryPeriod || "annual"})`.trim();
+      salary =
+        `${salaryCurrency} ${range} (${item.salaryPeriod || "annual"})`.trim();
     }
 
     const location =
@@ -180,18 +302,79 @@ async function fetchHimalayas(keyword, country) {
       contract: item.employmentType || "",
       salary
     };
-  }).filter((job) =>
+  }).filter(job =>
     job.url && /^https:\/\//i.test(job.url)
   );
 }
 
 // --------------------------------------------------
-// JOOBLE — UK INTEGRATION
+// JOOBLE WITH CLOUDFLARE EDGE CACHE
 // --------------------------------------------------
 
-async function fetchJoobleUK(keyword, apiKey) {
+async function fetchJoobleCached(
+  keyword,
+  countryCode,
+  config,
+  apiKey
+) {
+  const cacheKey = new Request(
+    `https://whizverse-job-cache.example/jooble/${countryCode}?keyword=${encodeURIComponent(keyword.toLowerCase())}`
+  );
+
+  const cache = typeof caches !== "undefined"
+    ? caches.default
+    : null;
+
+  if (cache) {
+    try {
+      const cached = await cache.match(cacheKey);
+
+      if (cached) {
+        return await cached.json();
+      }
+    } catch {
+      // Continue with the live API request.
+    }
+  }
+
+  const jobs = await fetchJooble(
+    keyword,
+    countryCode,
+    config,
+    apiKey
+  );
+
+  if (cache) {
+    try {
+      await cache.put(
+        cacheKey,
+        new Response(JSON.stringify(jobs), {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": `public, max-age=${CACHE_TTL}`
+          }
+        })
+      );
+    } catch {
+      // A cache failure must not affect job retrieval.
+    }
+  }
+
+  return jobs;
+}
+
+// --------------------------------------------------
+// JOOBLE COUNTRY API
+// --------------------------------------------------
+
+async function fetchJooble(
+  keyword,
+  countryCode,
+  config,
+  apiKey
+) {
   const endpoint =
-    `https://uk.jooble.org/api/${encodeURIComponent(apiKey)}`;
+    `https://${config.domain}.jooble.org/api/${encodeURIComponent(apiKey)}`;
 
   const response = await fetch(endpoint, {
     method: "POST",
@@ -201,7 +384,7 @@ async function fetchJoobleUK(keyword, apiKey) {
     },
     body: JSON.stringify({
       keywords: keyword || DEFAULT_KEYWORDS,
-      location: "United Kingdom",
+      location: config.name,
       page: 1,
       ResultOnPage: 20,
       companysearch: false
@@ -209,32 +392,37 @@ async function fetchJoobleUK(keyword, apiKey) {
   });
 
   if (!response.ok) {
-    throw new Error(`Jooble returned ${response.status}`);
+    throw new Error(
+      `Jooble ${countryCode.toUpperCase()} returned ${response.status}`
+    );
   }
 
   const payload = await response.json();
 
   if (!Array.isArray(payload.jobs)) {
-    throw new Error("Invalid Jooble response");
+    throw new Error(
+      `Invalid Jooble ${countryCode.toUpperCase()} response`
+    );
   }
 
-  return payload.jobs.map((item) => ({
-    id: `jooble-${item.id || item.link}`,
+  return payload.jobs.map(item => ({
+    id: `jooble-${countryCode}-${item.id || item.link}`,
     title: item.title || "Technology opportunity",
     company: item.company || "Employer not specified",
-    location: item.location || "United Kingdom",
-    countryCode: "gb",
+    location: item.location || config.name,
+    countryCode,
     url: item.link,
     source: "Jooble",
-    sourceUrl: "https://uk.jooble.org/",
-    created: item.updated && !Number.isNaN(Date.parse(item.updated))
-      ? new Date(item.updated).toISOString()
-      : null,
+    sourceUrl: `https://${config.domain}.jooble.org/`,
+    created: item.updated &&
+      !Number.isNaN(Date.parse(item.updated))
+        ? new Date(item.updated).toISOString()
+        : null,
     description: stripHtml(item.snippet || ""),
     category: "Technology",
     contract: item.type || "",
     salary: item.salary || ""
-  })).filter((job) =>
+  })).filter(job =>
     job.url && /^https:\/\//i.test(job.url)
   );
 }
@@ -278,7 +466,10 @@ function normalizeUrl(value) {
   try {
     const url = new URL(value);
     url.hash = "";
-    return url.toString().replace(/\/$/, "").toLowerCase();
+
+    return url.toString()
+      .replace(/\/$/, "")
+      .toLowerCase();
   } catch {
     return "";
   }
