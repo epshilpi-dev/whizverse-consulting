@@ -6,17 +6,7 @@ const COUNTRY_CODES = new Set([
 
 const DEFAULT_KEYWORDS = "software engineer";
 
-// Arbeitnow has no server-side keyword search.
-// Keep the number of pages limited to protect response time and provider limits.
-const ARBEITNOW_MAX_PAGES = 2;
-
-const ARBEITNOW_EU_URL =
-  "https://www.arbeitnow.com/api/job-board-api";
-
-const ARBEITNOW_UK_URL =
-  "https://www.arbeitnow.co.uk/api/job-board-api";
-
-export async function onRequestGet({ request }) {
+export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
 
   const country = (
@@ -25,83 +15,95 @@ export async function onRequestGet({ request }) {
 
   const keyword = (
     url.searchParams.get("keyword") || DEFAULT_KEYWORDS
-  ).trim().slice(0, 100);
+  ).trim().slice(0, 100) || DEFAULT_KEYWORDS;
 
   if (country !== "all" && !COUNTRY_CODES.has(country)) {
     return json({ jobs: [], error: "Unsupported country." }, 400);
   }
 
-  // Run providers independently. One provider failing must not
-  // prevent the other provider from returning job listings.
-  const results = await Promise.allSettled([
-    fetchHimalayas(keyword, country),
-    shouldUseArbeitnow(country)
-      ? fetchArbeitnow(country)
-      : Promise.resolve([])
-  ]);
+  // Himalayas remains available for all supported countries.
+  const tasks = [
+    fetchHimalayas(keyword, country)
+  ];
 
-  const himalayasJobs =
-    results[0].status === "fulfilled" ? results[0].value : [];
+  // Jooble UK is only queried for UK or all-country searches.
+  const joobleEnabled =
+    country === "all" || country === "gb";
 
-  const arbeitnowJobs =
-    results[1].status === "fulfilled" ? results[1].value : [];
+  if (joobleEnabled && env.JOOBLE_UK_API_KEY) {
+    tasks.push(fetchJoobleUK(keyword, env.JOOBLE_UK_API_KEY));
+  }
+
+  const results = await Promise.allSettled(tasks);
 
   const himalayasOk = results[0].status === "fulfilled";
-  const arbeitnowOk = results[1].status === "fulfilled";
+  const himalayasJobs = himalayasOk ? results[0].value : [];
+
+  let joobleOk = false;
+  let joobleJobs = [];
+
+  if (joobleEnabled && env.JOOBLE_UK_API_KEY) {
+    joobleOk = results[1]?.status === "fulfilled";
+    joobleJobs = joobleOk ? results[1].value : [];
+  }
 
   const jobs = deduplicateJobs([
     ...himalayasJobs,
-    ...arbeitnowJobs
+    ...joobleJobs
   ]);
 
-  const providers = [];
+  const providers = {
+    himalayas: himalayasOk,
+    jooble: joobleEnabled
+      ? Boolean(env.JOOBLE_UK_API_KEY) && joobleOk
+      : false
+  };
 
-  if (himalayasOk) providers.push("Himalayas");
-  if (arbeitnowOk && shouldUseArbeitnow(country)) {
-    providers.push("Arbeitnow");
-  }
-
-  if (!himalayasOk && !arbeitnowOk) {
+  if (!himalayasOk && !joobleOk) {
     return json({
       jobs: [],
-      error: "Job listings are temporarily unavailable. Please try again shortly."
+      total: 0,
+      error: "Job listings are temporarily unavailable. Please try again shortly.",
+      providers
     }, 502);
   }
 
-  let notice = "";
+  const activeSources = [];
 
-  if (providers.length === 2) {
-    notice = "Job opportunities from Himalayas and Arbeitnow. Select a listing to view the original posting and apply.";
-  } else if (providers.includes("Himalayas")) {
-    notice = "Job opportunities from Himalayas. Some additional listings may be temporarily unavailable.";
+  if (himalayasOk) activeSources.push("Himalayas");
+  if (joobleOk) activeSources.push("Jooble");
+
+  let notice;
+
+  if (activeSources.length === 2) {
+    notice = "Explore job opportunities from Himalayas and Jooble. Listings link to their original job sources.";
+  } else if (himalayasOk) {
+    notice = "Explore job opportunities from Himalayas. Additional job sources may be temporarily unavailable.";
   } else {
-    notice = "Job opportunities from Arbeitnow. Some additional listings may be temporarily unavailable.";
+    notice = "Explore UK job opportunities from Jooble. Additional job sources may be temporarily unavailable.";
   }
 
   return json({
     jobs,
     total: jobs.length,
     notice,
-    source: providers.join(", "),
-    providers: {
-      himalayas: himalayasOk,
-      arbeitnow: arbeitnowOk
-    },
+    source: activeSources.join(", "),
+    providers,
     sources: [
       {
         name: "Himalayas",
         url: "https://himalayas.app/"
       },
       {
-        name: "Arbeitnow",
-        url: "https://www.arbeitnow.com/"
+        name: "Jooble",
+        url: "https://uk.jooble.org/"
       }
     ]
   });
 }
 
 // --------------------------------------------------
-// HIMALAYAS — EXISTING PROVIDER
+// HIMALAYAS — ORIGINAL WORKING INTEGRATION
 // --------------------------------------------------
 
 async function fetchHimalayas(keyword, country) {
@@ -118,8 +120,7 @@ async function fetchHimalayas(keyword, country) {
   }
 
   const response = await fetch(api.toString(), {
-    headers: { Accept: "application/json" },
-    signal: AbortSignal.timeout(10000)
+    headers: { Accept: "application/json" }
   });
 
   if (!response.ok) {
@@ -128,7 +129,11 @@ async function fetchHimalayas(keyword, country) {
 
   const payload = await response.json();
 
-  return (payload.jobs || []).map((item) => {
+  if (!Array.isArray(payload.jobs)) {
+    throw new Error("Invalid Himalayas response");
+  }
+
+  return payload.jobs.map((item) => {
     const salaryCurrency = item.currency || "";
     const salaryMin = item.minSalary;
     const salaryMax = item.maxSalary;
@@ -166,7 +171,9 @@ async function fetchHimalayas(keyword, country) {
       created: item.pubDate
         ? new Date(item.pubDate * 1000).toISOString()
         : null,
-      description: stripHtml(item.excerpt || item.description || ""),
+      description: stripHtml(
+        item.excerpt || item.description || ""
+      ),
       category: Array.isArray(item.categories)
         ? item.categories.join(", ")
         : "Technology",
@@ -179,143 +186,57 @@ async function fetchHimalayas(keyword, country) {
 }
 
 // --------------------------------------------------
-// ARBEITNOW — NEW PROVIDER
+// JOOBLE — UK INTEGRATION
 // --------------------------------------------------
 
-function shouldUseArbeitnow(country) {
-  return country === "all" ||
-    ["gb", "ie", "de", "nl", "ch"].includes(country);
-}
+async function fetchJoobleUK(keyword, apiKey) {
+  const endpoint =
+    `https://uk.jooble.org/api/${encodeURIComponent(apiKey)}`;
 
-async function fetchArbeitnow(country) {
-  const endpoints = country === "all"
-    ? [ARBEITNOW_EU_URL, ARBEITNOW_UK_URL]
-    : country === "gb"
-      ? [ARBEITNOW_UK_URL, ARBEITNOW_EU_URL]
-      : [ARBEITNOW_EU_URL];
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      keywords: keyword || DEFAULT_KEYWORDS,
+      location: "United Kingdom",
+      page: 1,
+      ResultOnPage: 20,
+      companysearch: false
+    })
+  });
 
-  const results = await Promise.allSettled(
-    endpoints.map((endpoint) => fetchArbeitnowPages(endpoint))
-  );
-
-  const jobs = results
-    .filter((result) => result.status === "fulfilled")
-    .flatMap((result) => result.value);
-
-  // If every requested Arbeitnow endpoint failed, mark this
-  // provider as unavailable without affecting Himalayas.
-  if (jobs.length === 0 && results.every(
-    (result) => result.status === "rejected"
-  )) {
-    throw new Error("Arbeitnow is temporarily unavailable");
+  if (!response.ok) {
+    throw new Error(`Jooble returned ${response.status}`);
   }
 
-  const normalized = jobs.map(normalizeArbeitnowJob)
-    .filter(Boolean);
+  const payload = await response.json();
 
-  if (country === "all") return normalized;
-
-  return normalized.filter((job) =>
-    job.countryCode === country
-  );
-}
-
-async function fetchArbeitnowPages(baseUrl) {
-  const jobs = [];
-
-  for (let page = 1; page <= ARBEITNOW_MAX_PAGES; page++) {
-    const api = new URL(baseUrl);
-    api.searchParams.set("page", String(page));
-
-    const response = await fetch(api.toString(), {
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(10000)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Arbeitnow returned ${response.status}`);
-    }
-
-    const payload = await response.json();
-    const pageJobs = Array.isArray(payload.data)
-      ? payload.data
-      : [];
-
-    jobs.push(...pageJobs);
-
-    if (!payload.links?.next || pageJobs.length === 0) {
-      break;
-    }
+  if (!Array.isArray(payload.jobs)) {
+    throw new Error("Invalid Jooble response");
   }
 
-  return jobs;
-}
-
-function normalizeArbeitnowJob(item) {
-  const jobUrl = item.url || "";
-
-  if (!/^https:\/\//i.test(jobUrl)) return null;
-
-  const location = item.location || (
-    item.remote ? "Remote" : "Location not specified"
-  );
-
-  const countryCode = getCountryCode(
-    `${location} ${item.title || ""}`
-  );
-
-  return {
-    id: item.slug || jobUrl,
+  return payload.jobs.map((item) => ({
+    id: `jooble-${item.id || item.link}`,
     title: item.title || "Technology opportunity",
-    company: item.company_name || "Employer not specified",
-    location,
-    countryCode,
-    url: jobUrl,
-    source: "Arbeitnow",
-    sourceUrl: "https://www.arbeitnow.com/",
-    created: item.created_at
-      ? new Date(item.created_at * 1000).toISOString()
+    company: item.company || "Employer not specified",
+    location: item.location || "United Kingdom",
+    countryCode: "gb",
+    url: item.link,
+    source: "Jooble",
+    sourceUrl: "https://uk.jooble.org/",
+    created: item.updated && !Number.isNaN(Date.parse(item.updated))
+      ? new Date(item.updated).toISOString()
       : null,
-    description: stripHtml(item.description || ""),
-    category: Array.isArray(item.tags)
-      ? item.tags.join(", ")
-      : "Technology",
-    contract: "",
-    salary: ""
-  };
-}
-
-// --------------------------------------------------
-// COUNTRY MAPPING
-// --------------------------------------------------
-
-function getCountryCode(value) {
-  const text = String(value || "").toLowerCase();
-
-  const countries = [
-    { code: "gb", terms: ["united kingdom", "uk", "england", "scotland", "wales", "london", "manchester", "birmingham", "edinburgh", "glasgow", "bristol", "leeds"] },
-    { code: "ie", terms: ["ireland", "dublin", "cork", "galway", "limerick"] },
-    { code: "nl", terms: ["netherlands", "the netherlands", "amsterdam", "rotterdam", "utrecht", "eindhoven", "the hague"] },
-    { code: "de", terms: ["germany", "berlin", "munich", "frankfurt", "hamburg", "cologne"] },
-    { code: "ch", terms: ["switzerland", "zurich", "geneva", "basel"] },
-    { code: "in", terms: ["india", "bengaluru", "bangalore", "mumbai", "pune", "hyderabad", "chennai", "delhi"] },
-    { code: "us", terms: ["united states", "usa", "new york", "san francisco", "seattle", "austin"] },
-    { code: "ca", terms: ["canada", "toronto", "vancouver", "montreal"] },
-    { code: "sg", terms: ["singapore"] },
-    { code: "au", terms: ["australia", "sydney", "melbourne"] },
-    { code: "nz", terms: ["new zealand", "auckland", "wellington"] }
-  ];
-
-  for (const country of countries) {
-    if (country.terms.some((term) => {
-      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(text);
-    })) {
-      return country.code;
-    }
-  }
-
-  return "";
+    description: stripHtml(item.snippet || ""),
+    category: "Technology",
+    contract: item.type || "",
+    salary: item.salary || ""
+  })).filter((job) =>
+    job.url && /^https:\/\//i.test(job.url)
+  );
 }
 
 // --------------------------------------------------
@@ -328,8 +249,14 @@ function deduplicateJobs(jobs) {
 
   for (const job of jobs) {
     const urlKey = normalizeUrl(job.url);
-    const titleKey = String(job.title || "").toLowerCase().trim();
-    const companyKey = String(job.company || "").toLowerCase().trim();
+
+    const titleKey = String(job.title || "")
+      .toLowerCase()
+      .trim();
+
+    const companyKey = String(job.company || "")
+      .toLowerCase()
+      .trim();
 
     const key = urlKey || `${titleKey}|${companyKey}`;
 
@@ -340,8 +267,9 @@ function deduplicateJobs(jobs) {
   }
 
   return result.sort((a, b) => {
-    const dateA = a.created ? new Date(a.created).getTime() : 0;
-    const dateB = b.created ? new Date(b.created).getTime() : 0;
+    const dateA = a.created ? Date.parse(a.created) : 0;
+    const dateB = b.created ? Date.parse(b.created) : 0;
+
     return dateB - dateA;
   });
 }
@@ -350,7 +278,6 @@ function normalizeUrl(value) {
   try {
     const url = new URL(value);
     url.hash = "";
-    url.search = "";
     return url.toString().replace(/\/$/, "").toLowerCase();
   } catch {
     return "";
