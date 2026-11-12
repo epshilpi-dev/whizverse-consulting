@@ -102,7 +102,12 @@
           <h3>${escapeHtml(job.title || 'Technology opportunity')}</h3>
           <div class="company">${escapeHtml(job.company || 'Employer not specified')}</div>
         </div>
-        <span class="source-pill">${escapeHtml(job.source || 'Job feed')}</span>
+       <a class="source-pill"
+   href="${escapeHtml(safeUrl(job.sourceUrl) || 'https://www.himalayas.app/')}"
+   target="_blank"
+   rel="noopener noreferrer">
+   ${escapeHtml(job.source || 'Job feed')} · Source
+</a>
       </div>
       <div class="job-meta">
         <span>⌖ ${escapeHtml(job.location || 'Location not specified')}</span>
