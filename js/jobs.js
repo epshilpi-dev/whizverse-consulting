@@ -103,165 +103,209 @@
 
     const styles = document.createElement('style');
 
-    styles.textContent = `
-      #job-registration-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        background: rgba(9, 25, 45, .72);
-        padding: 20px;
-        align-items: center;
-        justify-content: center;
-        overflow-y: auto;
-      }
+<CodeBlock language="css" editable>
+#job-registration-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(9, 25, 45, .72);
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-      #job-registration-modal.is-open {
-        display: flex;
-      }
 
-      .job-reg-dialog {
-        width: 100%;
-        max-width: 470px;
-        background: #fff;
-        border-radius: 16px;
-        padding: 30px;
-        position: relative;
-        box-shadow: 0 20px 65px rgba(0,0,0,.25);
-        color: #243247;
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
-      }
+#job-registration-modal.is-open {
+display: flex;
+}
 
-      .job-reg-dialog h2 {
-        color: #102a43;
-        font-size: 25px;
-        line-height: 1.25;
-        margin: 0 35px 8px 0;
-      }
+.job-reg-dialog,
+.job-reg-dialog * {
+box-sizing: border-box;
+}
 
-      .job-reg-intro {
-        color: #64748b;
-        font-size: 14px;
-        margin: 0 0 18px;
-      }
+.job-reg-dialog {
+width: 100%;
+max-width: 470px;
+min-width: 0;
+background: #fff;
+border-radius: 16px;
+padding: 30px;
+position: relative;
+box-shadow: 0 20px 65px rgba(0,0,0,.25);
+color: #243247;
+max-height: calc(100vh - 40px);
+overflow-y: auto;
+overflow-x: hidden;
+}
 
-      .job-reg-selected {
-        background: #f1f6fa;
-        border-left: 4px solid #0f8b8d;
-        border-radius: 6px;
-        padding: 11px 13px;
-        margin-bottom: 20px;
-        font-size: 13px;
-      }
+.job-reg-dialog h2 {
+color: #102a43;
+font-size: 25px;
+line-height: 1.3;
+margin: 0 35px 8px 0;
+}
 
-      .job-reg-selected strong {
-        display: block;
-        color: #102a43;
-        font-size: 14px;
-      }
+.job-reg-intro {
+color: #64748b;
+font-size: 14px;
+margin: 0 0 18px;
+}
 
-      .job-reg-field {
-        margin-bottom: 15px;
-      }
+.job-reg-selected {
+background: #f1f6fa;
+border-left: 4px solid #0f8b8d;
+border-radius: 6px;
+padding: 11px 13px;
+margin-bottom: 20px;
+font-size: 13px;
+overflow-wrap: anywhere;
+}
 
-      .job-reg-field label {
-        display: block;
-        font-weight: 700;
-        font-size: 13px;
-        margin-bottom: 6px;
-        color: #26374a;
-      }
+.job-reg-selected strong {
+display: block;
+color: #102a43;
+font-size: 14px;
+}
 
-      .job-reg-field input {
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 12px;
-        font: inherit;
-        font-size: 14px;
-        color: #243247;
-        background: #fff;
-      }
+.job-reg-dialog form {
+display: block !important;
+grid-template-columns: none !important;
+width: 100%;
+min-width: 0;
+margin: 0;
+}
 
-      .job-reg-field input:focus {
-        outline: 2px solid rgba(15,139,141,.2);
-        border-color: #0f8b8d;
-      }
+.job-reg-field {
+display: block;
+width: 100%;
+min-width: 0;
+margin-bottom: 15px;
+}
 
-      .job-reg-consent {
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-        font-size: 12px;
-        line-height: 1.55;
-        color: #536276;
-        margin: 18px 0;
-      }
+.job-reg-field label {
+display: block !important;
+width: 100%;
+font-weight: 700;
+font-size: 13px;
+margin-bottom: 6px;
+color: #26374a;
+}
 
-      .job-reg-consent input {
-        margin-top: 3px;
-        flex: 0 0 auto;
-      }
+.job-reg-field input {
+display: block;
+width: 100% !important;
+max-width: 100%;
+min-width: 0;
+border: 1px solid #cbd5e1;
+border-radius: 8px;
+padding: 12px;
+font: inherit;
+font-size: 14px;
+color: #243247;
+background: #fff;
+}
 
-      .job-reg-consent a {
-        color: #0f7779;
-        font-weight: 700;
-      }
+.job-reg-field input:focus {
+outline: 2px solid rgba(15,139,141,.2);
+border-color: #0f8b8d;
+}
 
-      .job-reg-submit {
-        width: 100%;
-        padding: 13px 18px;
-        border: 0;
-        border-radius: 8px;
-        background: #0f8b8d;
-        color: #fff;
-        font-weight: 700;
-        font-size: 15px;
-        cursor: pointer;
-      }
+/* Consent alignment fix */
+.job-reg-dialog label.job-reg-consent {
+display: flex !important;
+flex-direction: row !important;
+align-items: flex-start !important;
+justify-content: flex-start !important;
+gap: 10px;
+width: 100%;
+min-width: 0;
+margin: 18px 0;
+font-size: 12px;
+line-height: 1.6;
+font-weight: 400;
+color: #536276;
+}
 
-      .job-reg-submit:hover {
-        background: #0b7375;
-      }
+.job-reg-dialog .job-reg-consent input[type="checkbox"] {
+display: block;
+flex: 0 0 16px;
+width: 16px !important;
+min-width: 16px !important;
+max-width: 16px;
+height: 16px;
+margin: 3px 0 0;
+padding: 0;
+cursor: pointer;
+}
 
-      .job-reg-submit:disabled {
-        opacity: .6;
-        cursor: wait;
-      }
+.job-reg-consent span {
+display: block;
+flex: 1 1 auto;
+min-width: 0;
+overflow-wrap: anywhere;
+}
 
-      .job-reg-close {
-        position: absolute;
-        top: 15px;
-        right: 17px;
-        width: 34px;
-        height: 34px;
-        border: 0;
-        border-radius: 50%;
-        background: #f1f5f9;
-        color: #334155;
-        font-size: 22px;
-        cursor: pointer;
-      }
+.job-reg-consent a {
+color: #0f7779;
+font-weight: 700;
+}
 
-      #job-reg-status {
-        margin-top: 12px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #b42318;
-        min-height: 18px;
-      }
+.job-reg-submit {
+display: block;
+width: 100%;
+max-width: 100%;
+padding: 13px 18px;
+border: 0;
+border-radius: 8px;
+background: #0f8b8d;
+color: #fff;
+font-weight: 700;
+font-size: 15px;
+cursor: pointer;
+}
 
-      @media(max-width: 520px) {
-        .job-reg-dialog {
-          padding: 24px 20px;
-        }
-      }
-    `;
+.job-reg-submit:hover {
+background: #0b7375;
+}
 
-    document.head.appendChild(styles);
+.job-reg-submit:disabled {
+opacity: .6;
+cursor: wait;
+}
+
+.job-reg-close {
+position: absolute;
+top: 15px;
+right: 17px;
+width: 34px;
+height: 34px;
+border: 0;
+border-radius: 50%;
+background: #f1f5f9;
+color: #334155;
+font-size: 22px;
+cursor: pointer;
+}
+
+#job-reg-status {
+margin-top: 12px;
+font-size: 13px;
+font-weight: 600;
+color: #b42318;
+min-height: 18px;
+overflow-wrap: anywhere;
+}
+
+@media(max-width: 520px) {
+.job-reg-dialog {
+padding: 24px 20px;
+}
+}
+</CodeBlock>    document.head.appendChild(styles);
 
     const modal = document.createElement('div');
     modal.id = 'job-registration-modal';
