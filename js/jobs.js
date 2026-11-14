@@ -53,7 +53,6 @@
     }
   };
 
-  // The application endpoint must be HTTPS.
   const safeApplicationUrl = (value) => {
     try {
       const u = new URL(value);
@@ -65,12 +64,13 @@
     }
   };
 
-  // Generate a cryptographically random browser token.
+  // Generate a secure random browser registration token.
   function generateToken() {
     const bytes = new Uint8Array(32);
     crypto.getRandomValues(bytes);
 
     let binary = '';
+
     bytes.forEach(byte => {
       binary += String.fromCharCode(byte);
     });
@@ -93,221 +93,228 @@
     try {
       localStorage.setItem(TOKEN_KEY, token);
     } catch {
-      throw new Error('Your browser could not save the registration session. Please enable local storage and try again.');
+      throw new Error(
+        'Your browser could not save the registration session. Please enable local storage and try again.'
+      );
     }
   }
 
-  // Create the registration dialog without changing jobs.html.
+  // --------------------------------------------------
+  // REGISTRATION MODAL
+  // --------------------------------------------------
+
   function createRegistrationModal() {
     if ($('job-registration-modal')) return;
 
     const styles = document.createElement('style');
 
-<CodeBlock language="css" editable>
-#job-registration-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: rgba(9, 25, 45, .72);
-  padding: 20px;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
+    styles.textContent = `
+      #job-registration-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(9, 25, 45, .72);
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
 
+      #job-registration-modal.is-open {
+        display: flex;
+      }
 
-#job-registration-modal.is-open {
-display: flex;
-}
+      .job-reg-dialog,
+      .job-reg-dialog * {
+        box-sizing: border-box;
+      }
 
-.job-reg-dialog,
-.job-reg-dialog * {
-box-sizing: border-box;
-}
+      .job-reg-dialog {
+        width: 100%;
+        max-width: 470px;
+        min-width: 0;
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        position: relative;
+        box-shadow: 0 20px 65px rgba(0,0,0,.25);
+        color: #243247;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
 
-.job-reg-dialog {
-width: 100%;
-max-width: 470px;
-min-width: 0;
-background: #fff;
-border-radius: 16px;
-padding: 30px;
-position: relative;
-box-shadow: 0 20px 65px rgba(0,0,0,.25);
-color: #243247;
-max-height: calc(100vh - 40px);
-overflow-y: auto;
-overflow-x: hidden;
-}
+      .job-reg-dialog h2 {
+        color: #102a43;
+        font-size: 25px;
+        line-height: 1.3;
+        margin: 0 35px 8px 0;
+      }
 
-.job-reg-dialog h2 {
-color: #102a43;
-font-size: 25px;
-line-height: 1.3;
-margin: 0 35px 8px 0;
-}
+      .job-reg-intro {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0 0 18px;
+      }
 
-.job-reg-intro {
-color: #64748b;
-font-size: 14px;
-margin: 0 0 18px;
-}
+      .job-reg-selected {
+        background: #f1f6fa;
+        border-left: 4px solid #0f8b8d;
+        border-radius: 6px;
+        padding: 11px 13px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
 
-.job-reg-selected {
-background: #f1f6fa;
-border-left: 4px solid #0f8b8d;
-border-radius: 6px;
-padding: 11px 13px;
-margin-bottom: 20px;
-font-size: 13px;
-overflow-wrap: anywhere;
-}
+      .job-reg-selected strong {
+        display: block;
+        color: #102a43;
+        font-size: 14px;
+      }
 
-.job-reg-selected strong {
-display: block;
-color: #102a43;
-font-size: 14px;
-}
+      .job-reg-dialog form {
+        display: block !important;
+        grid-template-columns: none !important;
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+      }
 
-.job-reg-dialog form {
-display: block !important;
-grid-template-columns: none !important;
-width: 100%;
-min-width: 0;
-margin: 0;
-}
+      .job-reg-field {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        margin-bottom: 15px;
+      }
 
-.job-reg-field {
-display: block;
-width: 100%;
-min-width: 0;
-margin-bottom: 15px;
-}
+      .job-reg-field label {
+        display: block !important;
+        width: 100%;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 6px;
+        color: #26374a;
+      }
 
-.job-reg-field label {
-display: block !important;
-width: 100%;
-font-weight: 700;
-font-size: 13px;
-margin-bottom: 6px;
-color: #26374a;
-}
+      .job-reg-field input {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 12px;
+        font: inherit;
+        font-size: 14px;
+        color: #243247;
+        background: #fff;
+      }
 
-.job-reg-field input {
-display: block;
-width: 100% !important;
-max-width: 100%;
-min-width: 0;
-border: 1px solid #cbd5e1;
-border-radius: 8px;
-padding: 12px;
-font: inherit;
-font-size: 14px;
-color: #243247;
-background: #fff;
-}
+      .job-reg-field input:focus {
+        outline: 2px solid rgba(15,139,141,.2);
+        border-color: #0f8b8d;
+      }
 
-.job-reg-field input:focus {
-outline: 2px solid rgba(15,139,141,.2);
-border-color: #0f8b8d;
-}
+      /* Consent checkbox and text alignment */
+      .job-reg-dialog label.job-reg-consent {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 10px;
+        width: 100%;
+        min-width: 0;
+        margin: 18px 0;
+        font-size: 12px;
+        line-height: 1.6;
+        font-weight: 400;
+        color: #536276;
+      }
 
-/* Consent alignment fix */
-.job-reg-dialog label.job-reg-consent {
-display: flex !important;
-flex-direction: row !important;
-align-items: flex-start !important;
-justify-content: flex-start !important;
-gap: 10px;
-width: 100%;
-min-width: 0;
-margin: 18px 0;
-font-size: 12px;
-line-height: 1.6;
-font-weight: 400;
-color: #536276;
-}
+      .job-reg-dialog .job-reg-consent input[type="checkbox"] {
+        display: block;
+        flex: 0 0 16px;
+        width: 16px !important;
+        min-width: 16px !important;
+        max-width: 16px;
+        height: 16px;
+        margin: 3px 0 0;
+        padding: 0;
+        cursor: pointer;
+      }
 
-.job-reg-dialog .job-reg-consent input[type="checkbox"] {
-display: block;
-flex: 0 0 16px;
-width: 16px !important;
-min-width: 16px !important;
-max-width: 16px;
-height: 16px;
-margin: 3px 0 0;
-padding: 0;
-cursor: pointer;
-}
+      .job-reg-consent span {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
 
-.job-reg-consent span {
-display: block;
-flex: 1 1 auto;
-min-width: 0;
-overflow-wrap: anywhere;
-}
+      .job-reg-consent a {
+        color: #0f7779;
+        font-weight: 700;
+      }
 
-.job-reg-consent a {
-color: #0f7779;
-font-weight: 700;
-}
+      .job-reg-submit {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 13px 18px;
+        border: 0;
+        border-radius: 8px;
+        background: #0f8b8d;
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+      }
 
-.job-reg-submit {
-display: block;
-width: 100%;
-max-width: 100%;
-padding: 13px 18px;
-border: 0;
-border-radius: 8px;
-background: #0f8b8d;
-color: #fff;
-font-weight: 700;
-font-size: 15px;
-cursor: pointer;
-}
+      .job-reg-submit:hover {
+        background: #0b7375;
+      }
 
-.job-reg-submit:hover {
-background: #0b7375;
-}
+      .job-reg-submit:disabled {
+        opacity: .6;
+        cursor: wait;
+      }
 
-.job-reg-submit:disabled {
-opacity: .6;
-cursor: wait;
-}
+      .job-reg-close {
+        position: absolute;
+        top: 15px;
+        right: 17px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #334155;
+        font-size: 22px;
+        cursor: pointer;
+      }
 
-.job-reg-close {
-position: absolute;
-top: 15px;
-right: 17px;
-width: 34px;
-height: 34px;
-border: 0;
-border-radius: 50%;
-background: #f1f5f9;
-color: #334155;
-font-size: 22px;
-cursor: pointer;
-}
+      #job-reg-status {
+        margin-top: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #b42318;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+      }
 
-#job-reg-status {
-margin-top: 12px;
-font-size: 13px;
-font-weight: 600;
-color: #b42318;
-min-height: 18px;
-overflow-wrap: anywhere;
-}
+      @media(max-width: 520px) {
+        .job-reg-dialog {
+          padding: 24px 20px;
+        }
+      }
+    `;
 
-@media(max-width: 520px) {
-.job-reg-dialog {
-padding: 24px 20px;
-}
-}
-</CodeBlock>    document.head.appendChild(styles);
+    document.head.appendChild(styles);
 
     const modal = document.createElement('div');
+
     modal.id = 'job-registration-modal';
     modal.setAttribute('aria-hidden', 'true');
 
@@ -335,6 +342,7 @@ padding: 24px 20px;
         </div>
 
         <form id="job-reg-form">
+
           <div class="job-reg-field">
             <label for="job-reg-name">Full name *</label>
             <input type="text"
@@ -370,6 +378,7 @@ padding: 24px 20px;
             <input type="checkbox"
                    id="job-reg-consent"
                    required>
+
             <span>
               I acknowledge the
               <a href="/privacy-policy.html"
@@ -387,23 +396,37 @@ padding: 24px 20px;
             Register & Continue to Apply
           </button>
 
-          <div id="job-reg-status" role="status" aria-live="polite"></div>
+          <div id="job-reg-status"
+               role="status"
+               aria-live="polite"></div>
+
         </form>
       </div>
     `;
 
     document.body.appendChild(modal);
 
-    $('job-reg-close').addEventListener('click', closeRegistrationModal);
+    $('job-reg-close').addEventListener(
+      'click',
+      closeRegistrationModal
+    );
 
     modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeRegistrationModal();
+      if (event.target === modal) {
+        closeRegistrationModal();
+      }
     });
 
-    $('job-reg-form').addEventListener('submit', submitRegistration);
+    $('job-reg-form').addEventListener(
+      'submit',
+      submitRegistration
+    );
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+      if (
+        event.key === 'Escape' &&
+        modal.classList.contains('is-open')
+      ) {
         closeRegistrationModal();
       }
     });
@@ -411,6 +434,7 @@ padding: 24px 20px;
 
   function openRegistrationModal(job) {
     selectedJob = job;
+
     createRegistrationModal();
 
     $('job-reg-job-title').textContent =
@@ -420,15 +444,19 @@ padding: 24px 20px;
       job.company || 'Employer not specified';
 
     $('job-reg-status').textContent = '';
+    $('job-reg-status').style.color = '#b42318';
+
     $('job-reg-form').reset();
 
     $('job-reg-submit').disabled = false;
-    $('job-reg-submit').textContent = 'Register & Continue to Apply';
+    $('job-reg-submit').textContent =
+      'Register & Continue to Apply';
 
     const modal = $('job-registration-modal');
 
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
+
     document.body.style.overflow = 'hidden';
 
     $('job-reg-name').focus();
@@ -436,12 +464,18 @@ padding: 24px 20px;
 
   function closeRegistrationModal() {
     const modal = $('job-registration-modal');
+
     if (!modal || registrationInProgress) return;
 
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
+
     document.body.style.overflow = '';
   }
+
+  // --------------------------------------------------
+  // TOKEN VERIFICATION
+  // --------------------------------------------------
 
   async function verifyRegistration(token) {
     const response = await fetch('/api/job-register', {
@@ -459,17 +493,25 @@ padding: 24px 20px;
     const result = await response.json();
 
     if (!response.ok || !result.success) {
-      throw new Error(result.message || 'Unable to verify your registration.');
+      throw new Error(
+        result.message || 'Unable to verify your registration.'
+      );
     }
 
     return Boolean(result.registered);
   }
 
+  // --------------------------------------------------
+  // APPLY BUTTON HANDLER
+  // --------------------------------------------------
+
   async function handleApply(job) {
     const applicationUrl = safeApplicationUrl(job.url);
 
     if (!applicationUrl) {
-      alert('The application link is unavailable or is not a secure HTTPS link.');
+      alert(
+        'The application link is unavailable or is not a secure HTTPS link.'
+      );
       return;
     }
 
@@ -484,12 +526,18 @@ padding: 24px 20px;
           return;
         }
 
-        // Token is no longer recognised. Ask the visitor to register again.
         localStorage.removeItem(TOKEN_KEY);
 
       } catch (error) {
-        console.error('Registration verification failed:', error);
-        alert('We could not verify your registration at the moment. Please try again shortly.');
+        console.error(
+          'Registration verification failed:',
+          error
+        );
+
+        alert(
+          'We could not verify your registration at the moment. Please try again shortly.'
+        );
+
         return;
       }
     }
@@ -500,6 +548,10 @@ padding: 24px 20px;
     });
   }
 
+  // --------------------------------------------------
+  // REGISTRATION SUBMISSION
+  // --------------------------------------------------
+
   async function submitRegistration(event) {
     event.preventDefault();
 
@@ -509,10 +561,12 @@ padding: 24px 20px;
 
     if (!registrationForm.reportValidity()) return;
 
-    const applicationUrl = safeApplicationUrl(selectedJob.url);
+    const applicationUrl =
+      safeApplicationUrl(selectedJob.url);
 
     if (!applicationUrl) {
-      $('job-reg-status').textContent = 'The employer application link is invalid.';
+      $('job-reg-status').textContent =
+        'The employer application link is invalid.';
       return;
     }
 
@@ -520,8 +574,10 @@ padding: 24px 20px;
     const statusMessage = $('job-reg-status');
 
     registrationInProgress = true;
+
     submitButton.disabled = true;
     submitButton.textContent = 'Registering…';
+
     statusMessage.textContent = '';
 
     try {
@@ -530,14 +586,20 @@ padding: 24px 20px;
       const payload = {
         mode: 'register',
         token,
+
         fullName: $('job-reg-name').value.trim(),
         email: $('job-reg-email').value.trim(),
         phone: $('job-reg-phone').value.trim(),
-        jobTitle: selectedJob.title || 'Technology opportunity',
+
+        jobTitle:
+          selectedJob.title || 'Technology opportunity',
+
         company: selectedJob.company || '',
         source: selectedJob.source || '',
         applicationUrl,
-        consentPrivacy: $('job-reg-consent').checked
+
+        consentPrivacy:
+          $('job-reg-consent').checked
       };
 
       const response = await fetch('/api/job-register', {
@@ -551,15 +613,23 @@ padding: 24px 20px;
 
       const result = await response.json();
 
-      if (!response.ok || !result.success || !result.registered) {
-        throw new Error(result.message || 'Registration could not be completed.');
+      if (
+        !response.ok ||
+        !result.success ||
+        !result.registered
+      ) {
+        throw new Error(
+          result.message || 'Registration could not be completed.'
+        );
       }
 
-      // Save the browser token only after the server confirms registration.
+      // Store the token only after server confirmation.
       saveToken(token);
 
       statusMessage.style.color = '#087c70';
-      statusMessage.textContent = 'Registration successful. Redirecting to the employer…';
+
+      statusMessage.textContent =
+        'Registration successful. Redirecting to the employer…';
 
       window.location.assign(applicationUrl);
 
@@ -567,16 +637,24 @@ padding: 24px 20px;
       console.error('Job registration failed:', error);
 
       statusMessage.style.color = '#b42318';
+
       statusMessage.textContent =
-        error.message || 'Unable to complete registration. Please try again.';
+        error.message ||
+        'Unable to complete registration. Please try again.';
 
       submitButton.disabled = false;
-      submitButton.textContent = 'Register & Continue to Apply';
+
+      submitButton.textContent =
+        'Register & Continue to Apply';
 
     } finally {
       registrationInProgress = false;
     }
   }
+
+  // --------------------------------------------------
+  // JOB FILTERING
+  // --------------------------------------------------
 
   const matches = (job) => {
     const keyword = $('keyword').value.trim().toLowerCase();
@@ -592,76 +670,161 @@ padding: 24px 20px;
       job.category
     ].join(' ').toLowerCase();
 
-    if (keyword && !keyword.split(/\s+/).every(word => searchable.includes(word))) {
+    if (
+      keyword &&
+      !keyword.split(/\s+/).every(
+        word => searchable.includes(word)
+      )
+    ) {
       return false;
     }
 
-    const loc = `${job.location || ''} ${job.description || ''}`.toLowerCase();
+    const loc =
+      `${job.location || ''} ${job.description || ''}`.toLowerCase();
 
-    if (mode === 'remote' && !/remote|work from home|distributed/.test(loc)) return false;
-    if (mode === 'hybrid' && !/hybrid/.test(loc)) return false;
-    if (mode === 'onsite' && /remote|work from home|hybrid/.test(loc)) return false;
+    if (
+      mode === 'remote' &&
+      !/remote|work from home|distributed/.test(loc)
+    ) return false;
+
+    if (
+      mode === 'hybrid' &&
+      !/hybrid/.test(loc)
+    ) return false;
+
+    if (
+      mode === 'onsite' &&
+      /remote|work from home|hybrid/.test(loc)
+    ) return false;
 
     const title = (job.title || '').toLowerCase();
 
-    if (seniority === 'leadership' && !/chief|cto|cio|vp|vice president|director|head of|leadership|executive|manager/.test(title)) return false;
-    if (seniority === 'architect' && !/architect|principal/.test(title)) return false;
-    if (seniority === 'senior' && !/senior|lead|staff|principal/.test(title)) return false;
-    if (seniority === 'engineering' && !/engineer|developer|analyst|specialist|administrator|technician|security|data scientist|tester|qa/.test(title)) return false;
+    if (
+      seniority === 'leadership' &&
+      !/chief|cto|cio|vp|vice president|director|head of|leadership|executive|manager/.test(title)
+    ) return false;
+
+    if (
+      seniority === 'architect' &&
+      !/architect|principal/.test(title)
+    ) return false;
+
+    if (
+      seniority === 'senior' &&
+      !/senior|lead|staff|principal/.test(title)
+    ) return false;
+
+    if (
+      seniority === 'engineering' &&
+      !/engineer|developer|analyst|specialist|administrator|technician|security|data scientist|tester|qa/.test(title)
+    ) return false;
 
     if (days !== 'any' && job.created) {
-      const age = (Date.now() - new Date(job.created).getTime()) / 86400000;
-      if (Number.isFinite(age) && (age < -1 || age > Number(days))) return false;
+      const age =
+        (Date.now() - new Date(job.created).getTime()) / 86400000;
+
+      if (
+        Number.isFinite(age) &&
+        (age < -1 || age > Number(days))
+      ) return false;
     }
 
     return true;
   };
 
+  // --------------------------------------------------
+  // JOB CARD
+  // --------------------------------------------------
+
   const card = (job) => {
     const url = safeUrl(job.url);
+
     if (!url) return '';
 
-    const salary = job.salary ? `<span>${escapeHtml(job.salary)}</span>` : '';
-    const category = job.category ? `<span>${escapeHtml(job.category)}</span>` : '';
-    const contract = job.contract ? `<span>${escapeHtml(job.contract)}</span>` : '';
+    const salary = job.salary
+      ? `<span>${escapeHtml(job.salary)}</span>`
+      : '';
 
-    return `<article class="job-card">
-      <div class="job-top">
-        <div>
-          <h3>${escapeHtml(job.title || 'Technology opportunity')}</h3>
-          <div class="company">${escapeHtml(job.company || 'Employer not specified')}</div>
+    const category = job.category
+      ? `<span>${escapeHtml(job.category)}</span>`
+      : '';
+
+    const contract = job.contract
+      ? `<span>${escapeHtml(job.contract)}</span>`
+      : '';
+
+    return `
+      <article class="job-card">
+
+        <div class="job-top">
+          <div>
+            <h3>
+              ${escapeHtml(job.title || 'Technology opportunity')}
+            </h3>
+
+            <div class="company">
+              ${escapeHtml(job.company || 'Employer not specified')}
+            </div>
+          </div>
+
+          <a class="source-pill"
+             href="${escapeHtml(
+               safeUrl(job.sourceUrl) ||
+               'https://www.himalayas.app/'
+             )}"
+             target="_blank"
+             rel="noopener noreferrer">
+
+            ${escapeHtml(job.source || 'Job feed')} · Source
+
+          </a>
         </div>
-        <a class="source-pill"
-           href="${escapeHtml(safeUrl(job.sourceUrl) || 'https://www.himalayas.app/')}"
-           target="_blank"
-           rel="noopener noreferrer">
-          ${escapeHtml(job.source || 'Job feed')} · Source
-        </a>
-      </div>
 
-      <div class="job-meta">
-        <span>⌖ ${escapeHtml(job.location || 'Location not specified')}</span>
-        ${contract}${category}${salary}
-      </div>
+        <div class="job-meta">
+          <span>
+            ⌖ ${escapeHtml(job.location || 'Location not specified')}
+          </span>
 
-      <p class="job-description">
-        ${escapeHtml(job.description || 'Open the original listing for full role details and application requirements.')}
-      </p>
+          ${contract}
+          ${category}
+          ${salary}
+        </div>
 
-      <div class="job-bottom">
-        <span class="posted-date">${escapeHtml(formatDate(job.created))}</span>
-        <button class="apply-link"
-                type="button"
-                data-job-apply
-                data-job-url="${escapeHtml(url)}"
-                data-job-title="${escapeHtml(job.title || 'Technology opportunity')}"
-                data-job-company="${escapeHtml(job.company || '')}"
-                data-job-source="${escapeHtml(job.source || '')}">
-          View job & apply ↗
-        </button>
-      </div>
-    </article>`;
+        <p class="job-description">
+          ${escapeHtml(
+            job.description ||
+            'Open the original listing for full role details and application requirements.'
+          )}
+        </p>
+
+        <div class="job-bottom">
+
+          <span class="posted-date">
+            ${escapeHtml(formatDate(job.created))}
+          </span>
+
+          <button class="apply-link"
+                  type="button"
+                  data-job-apply
+                  data-job-url="${escapeHtml(url)}"
+                  data-job-title="${escapeHtml(
+                    job.title || 'Technology opportunity'
+                  )}"
+                  data-job-company="${escapeHtml(job.company || '')}"
+                  data-job-source="${escapeHtml(job.source || '')}">
+
+            View job & apply ↗
+
+          </button>
+
+        </div>
+      </article>
+    `;
   };
+
+  // --------------------------------------------------
+  // RENDER JOBS
+  // --------------------------------------------------
 
   function render() {
     const filtered = allJobs.filter(matches);
@@ -670,45 +833,71 @@ padding: 24px 20px;
     list.innerHTML = shown.map(card).join('');
 
     summary.textContent =
-      `${filtered.length} matching ${filtered.length === 1 ? 'opportunity' : 'opportunities'}`;
+      `${filtered.length} matching ${
+        filtered.length === 1
+          ? 'opportunity'
+          : 'opportunities'
+      }`;
 
     empty.hidden = filtered.length !== 0;
+
     moreWrap.hidden = filtered.length <= visibleCount;
 
     if (filtered.length === 0 && allJobs.length > 0) {
       empty.hidden = false;
-      status.textContent = 'No opportunities match these filters. Try changing your search criteria.';
+
+      status.textContent =
+        'No opportunities match these filters. Try changing your search criteria.';
     }
   }
 
+  // --------------------------------------------------
+  // LOAD JOBS API
+  // --------------------------------------------------
+
   async function loadJobs() {
-    status.textContent = 'Finding the latest technology opportunities…';
+    status.textContent =
+      'Finding the latest technology opportunities…';
+
     refreshButton.disabled = true;
 
     try {
       const params = new URLSearchParams({
         country: $('country').value,
-        keyword: $('keyword').value.trim() || 'software engineer'
+        keyword:
+          $('keyword').value.trim() || 'software engineer'
       });
 
-      const response = await fetch(`/api/jobs?${params.toString()}`, {
-        headers: { Accept: 'application/json' }
-      });
+      const response = await fetch(
+        `/api/jobs?${params.toString()}`,
+        {
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      );
 
       let data;
 
       try {
         data = await response.json();
       } catch {
-        throw new Error('The job service returned an unexpected response.');
+        throw new Error(
+          'The job service returned an unexpected response.'
+        );
       }
 
       if (!response.ok) {
-        throw new Error(data.error || 'The job service is temporarily unavailable.');
+        throw new Error(
+          data.error ||
+          'The job service is temporarily unavailable.'
+        );
       }
 
       if (!Array.isArray(data.jobs)) {
-        throw new Error('We could not retrieve job listings at the moment.');
+        throw new Error(
+          'We could not retrieve job listings at the moment.'
+        );
       }
 
       allJobs = data.jobs;
@@ -717,7 +906,8 @@ padding: 24px 20px;
       render();
 
       if (allJobs.length > 0) {
-        status.textContent = data.notice ||
+        status.textContent =
+          data.notice ||
           'Browse the latest opportunities and apply directly through the original employer listing.';
       } else {
         status.textContent =
@@ -726,24 +916,36 @@ padding: 24px 20px;
 
     } catch (error) {
       allJobs = [];
+
       list.innerHTML = '';
-      summary.textContent = 'Job opportunities temporarily unavailable';
+
+      summary.textContent =
+        'Job opportunities temporarily unavailable';
+
       empty.hidden = false;
       moreWrap.hidden = true;
 
       status.textContent =
         'We’re having trouble refreshing job listings right now. Please try again shortly, or explore opportunities through the job portals above.';
 
-      console.error('Job listing request failed:', error);
+      console.error(
+        'Job listing request failed:',
+        error
+      );
 
     } finally {
       refreshButton.disabled = false;
     }
   }
 
-  // Handle Apply clicks using event delegation.
+  // --------------------------------------------------
+  // EVENT LISTENERS
+  // --------------------------------------------------
+
+  // Apply button event delegation.
   list.addEventListener('click', (event) => {
     const button = event.target.closest('[data-job-apply]');
+
     if (!button) return;
 
     handleApply({
@@ -772,5 +974,7 @@ padding: 24px 20px;
 
   $('country').addEventListener('change', loadJobs);
 
+  // Initial job listing.
   loadJobs();
+
 })();
